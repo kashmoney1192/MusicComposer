@@ -11,7 +11,8 @@ import {
   Smartphone,
   Tablet,
   Monitor,
-  ChevronDown
+  ChevronDown,
+  Sparkles
 } from 'lucide-react';
 import { useDevice } from '../../contexts/DeviceContext';
 
@@ -88,6 +89,42 @@ function Navbar() {
               {isDeviceMenuOpen && (
                 <>
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    {/* Auto-Detect Option */}
+                    <button
+                      onClick={() => {
+                        const width = window.innerWidth;
+                        let deviceId;
+                        if (width < 768) {
+                          deviceId = 'mobile';
+                        } else if (width < 1024) {
+                          deviceId = 'tablet';
+                        } else {
+                          deviceId = 'laptop';
+                        }
+                        const devices = [
+                          { id: 'mobile', name: 'Mobile', icon: Smartphone, desc: '320px - 480px' },
+                          { id: 'tablet', name: 'Tablet', icon: Tablet, desc: '768px - 1024px' },
+                          { id: 'laptop', name: 'Laptop', icon: Monitor, desc: '1024px+' },
+                        ];
+                        const selectedDevice = devices.find(d => d.id === deviceId);
+                        selectDevice({
+                          id: selectedDevice.id,
+                          name: selectedDevice.name,
+                          description: selectedDevice.desc,
+                          icon: selectedDevice.icon,
+                        });
+                        setIsDeviceMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors border-b border-gray-100 text-gray-700 hover:bg-blue-50"
+                    >
+                      <Sparkles className="w-4 h-4 text-blue-500" />
+                      <div className="text-left">
+                        <p className="font-medium">Auto-Detect</p>
+                        <p className="text-xs text-gray-500">Match screen size</p>
+                      </div>
+                    </button>
+
+                    {/* Device Options */}
                     {[
                       { id: 'mobile', name: 'Mobile', icon: Smartphone, desc: '320px - 480px' },
                       { id: 'tablet', name: 'Tablet', icon: Tablet, desc: '768px - 1024px' },
