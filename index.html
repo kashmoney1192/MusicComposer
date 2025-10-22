@@ -6,6 +6,19 @@
     <title>Music Sight Reading Practice</title>
     <!-- Custom music notation without VexFlow -->
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Redirect to home page on GitHub Pages
+        (function() {
+            var loc = window.location;
+            var isGitHubPages = loc.hostname === 'aakashgoradia.github.io';
+            var repoPath = '/MusicComposer';
+
+            if (isGitHubPages && loc.pathname === repoPath + '/') {
+                // Redirect root to home
+                loc.replace(repoPath + '/#/home');
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
