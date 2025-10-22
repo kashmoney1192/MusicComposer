@@ -56,7 +56,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400 space-y-2">
           <p>&copy; {new Date().getFullYear()} Music Composer. All rights reserved.</p>
           <p className="text-sm text-gray-500">
-            Last updated: {new Date().toLocaleString('en-US', {
+            Last updated: {process.env.REACT_APP_BUILD_TIME || new Date().toLocaleString('en-US', {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
