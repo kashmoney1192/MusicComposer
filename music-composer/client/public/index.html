@@ -17,8 +17,9 @@
       (function() {
         var loc = window.location;
         var repoBase = '/MusicComposer';
+        var isGitHubPages = loc.hostname === 'kashmoney1192.github.io';
         // Exact root paths that should redirect
-        if ((loc.pathname === repoBase || loc.pathname === repoBase + '/') && !loc.hash) {
+        if (isGitHubPages && (loc.pathname === repoBase || loc.pathname === repoBase + '/') && !loc.hash) {
           window.location.replace(repoBase + '/#/home');
         }
       })();
