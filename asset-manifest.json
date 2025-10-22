@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/MusicComposer/static/css/main.26c0c28e.css",
-    "main.js": "/MusicComposer/static/js/main.2217470a.js",
+    "main.css": "/MusicComposer/static/css/main.633f8a2c.css",
+    "main.js": "/MusicComposer/static/js/main.485dd9f0.js",
     "static/js/213.02151b88.chunk.js": "/MusicComposer/static/js/213.02151b88.chunk.js",
     "static/js/455.58dcead2.chunk.js": "/MusicComposer/static/js/455.58dcead2.chunk.js",
     "index.html": "/MusicComposer/index.html",
-    "main.26c0c28e.css.map": "/MusicComposer/static/css/main.26c0c28e.css.map",
-    "main.2217470a.js.map": "/MusicComposer/static/js/main.2217470a.js.map",
+    "main.633f8a2c.css.map": "/MusicComposer/static/css/main.633f8a2c.css.map",
+    "main.485dd9f0.js.map": "/MusicComposer/static/js/main.485dd9f0.js.map",
     "213.02151b88.chunk.js.map": "/MusicComposer/static/js/213.02151b88.chunk.js.map",
     "455.58dcead2.chunk.js.map": "/MusicComposer/static/js/455.58dcead2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.26c0c28e.css",
-    "static/js/main.2217470a.js"
+    "static/css/main.633f8a2c.css",
+    "static/js/main.485dd9f0.js"
   ]
 }

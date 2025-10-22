@@ -181,14 +181,58 @@
   .no-print {
     display: none !important;
   }
-  
+
   .print-full-width {
     width: 100% !important;
     max-width: none !important;
   }
-  
+
   .vexflow-container {
     border: none !important;
     box-shadow: none !important;
+  }
+}
+
+/* Device-specific responsive styles */
+/* Mobile devices (320px - 480px) */
+@media (max-width: 480px) {
+  .device-mobile {
+    font-size: 14px;
+  }
+
+  .device-mobile .text-lg {
+    font-size: 16px;
+  }
+
+  .device-mobile .text-xl {
+    font-size: 18px;
+  }
+
+  .device-mobile .text-2xl {
+    font-size: 20px;
+  }
+
+  .device-mobile .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .device-mobile .py-8 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Tablet devices (481px - 1024px) */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .device-tablet {
+    font-size: 15px;
+  }
+}
+
+/* Laptop/Desktop (1025px+) */
+@media (min-width: 1025px) {
+  .device-laptop {
+    font-size: 16px;
   }
 }

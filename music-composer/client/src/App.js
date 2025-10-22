@@ -4,6 +4,10 @@ import { Routes, Route, Navigate, Link } from 'react-router-dom';
 // Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import DeviceSelector from './components/DeviceSelector';
+
+// Contexts
+import { useDevice } from './contexts/DeviceContext';
 
 // Pages
 import Home from './pages/Home';
@@ -21,6 +25,13 @@ import SightReading from './pages/SightReading';
 // import AuthCallback from './pages/auth/AuthCallback';
 
 function App() {
+  const { hasSelectedDevice, selectDevice } = useDevice();
+
+  // Show device selector if device hasn't been selected
+  if (!hasSelectedDevice) {
+    return <DeviceSelector onDeviceSelected={selectDevice} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
