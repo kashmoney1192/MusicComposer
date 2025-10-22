@@ -7,12 +7,19 @@ import {
   Search,
   Menu,
   X,
-  BookOpen
+  BookOpen,
+  Smartphone,
+  Tablet,
+  Monitor,
+  ChevronDown
 } from 'lucide-react';
+import { useDevice } from '../../contexts/DeviceContext';
 
 function Navbar() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDeviceMenuOpen, setIsDeviceMenuOpen] = useState(false);
+  const { device, selectDevice, isMobile, isTablet, isLaptop } = useDevice();
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -60,6 +67,68 @@ function Navbar() {
             >
               Compose
             </NavLink>
+          </div>
+
+          {/* Device selector dropdown (right side) */}
+          <div className="flex items-center space-x-4">
+            <div className="relative hidden sm:block">
+              <button
+                onClick={() => setIsDeviceMenuOpen(!isDeviceMenuOpen)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                title="Change device type"
+              >
+                {isMobile && <Smartphone className="w-4 h-4" />}
+                {isTablet && <Tablet className="w-4 h-4" />}
+                {isLaptop && <Monitor className="w-4 h-4" />}
+                <span className="hidden sm:inline capitalize">{device?.name}</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              {/* Device dropdown menu */}
+              {isDeviceMenuOpen && (
+                <>
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    {[
+                      { id: 'mobile', name: 'Mobile', icon: Smartphone, desc: '320px - 480px' },
+                      { id: 'tablet', name: 'Tablet', icon: Tablet, desc: '768px - 1024px' },
+                      { id: 'laptop', name: 'Laptop', icon: Monitor, desc: '1024px+' },
+                    ].map((d) => {
+                      const Icon = d.icon;
+                      return (
+                        <button
+                          key={d.id}
+                          onClick={() => {
+                            selectDevice({
+                              id: d.id,
+                              name: d.name,
+                              description: d.desc,
+                              icon: d.icon,
+                            });
+                            setIsDeviceMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors ${
+                            device?.id === d.id
+                              ? 'bg-blue-50 text-blue-600 font-semibold'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <Icon className="w-4 h-4" />
+                          <div className="text-left">
+                            <p className="font-medium">{d.name}</p>
+                            <p className="text-xs text-gray-500">{d.desc}</p>
+                          </div>
+                          {device?.id === d.id && <span className="ml-auto text-blue-600">✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsDeviceMenuOpen(false)}
+                  />
+                </>
+              )}
+            </div>
           </div>
 
           {/* Mobile menu button */}
