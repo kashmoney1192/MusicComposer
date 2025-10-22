@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Sight Reading Practice</title>
+    <!-- Custom music notation without VexFlow -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎹 Music Sight Reading Practice</h1>
+            <p>Choose your level and practice reading sheet music</p>
+        </header>
+
+        <!-- Navigation between features -->
+        <div class="feature-nav">
+            <button id="sightReadingBtn" class="feature-btn active">🎹 Sight Reading Practice</button>
+            <button id="composerBtn" class="feature-btn">🎼 Music Composer</button>
+        </div>
+
+        <div class="level-selection" id="levelSelection">
+            <h2>Select Difficulty Level</h2>
+            <div class="levels-grid">
+                <div class="level-card" data-level="1">
+                    <h3>Level 1 - Beginner</h3>
+                    <p>Simple notes, C major scale only</p>
+                    <p>Whole and half notes</p>
+                </div>
+                <div class="level-card" data-level="2">
+                    <h3>Level 2 - Elementary</h3>
+                    <p>Quarter notes added</p>
+                    <p>Basic rhythms</p>
+                </div>
+                <div class="level-card" data-level="3">
+                    <h3>Level 3 - Easy</h3>
+                    <p>Eighth notes</p>
+                    <p>Simple time signatures</p>
+                </div>
+                <div class="level-card" data-level="4">
+                    <h3>Level 4 - Intermediate</h3>
+                    <p>Mixed rhythms</p>
+                    <p>Basic accidentals</p>
+                </div>
+                <div class="level-card" data-level="5">
+                    <h3>Level 5 - Advanced</h3>
+                    <p>Complex rhythms</p>
+                    <p>Multiple accidentals</p>
+                </div>
+                <div class="level-card" data-level="6">
+                    <h3>Level 6 - Expert</h3>
+                    <p>Sixteenth notes</p>
+                    <p>Advanced accidentals</p>
+                </div>
+                <div class="level-card" data-level="7">
+                    <h3>Level 7 - Professional</h3>
+                    <p>Complex time signatures</p>
+                    <p>Advanced harmonies</p>
+                </div>
+                <div class="level-card" data-level="8">
+                    <h3>Level 8 - Master</h3>
+                    <p>Irregular rhythms</p>
+                    <p>Full chromatic range</p>
+                </div>
+                <div class="level-card" data-level="9">
+                    <h3>Level 9 - Virtuoso</h3>
+                    <p>Complex polyrhythms</p>
+                    <p>Extended techniques</p>
+                </div>
+                <div class="level-card" data-level="10">
+                    <h3>Level 10 - Concert</h3>
+                    <p>Professional difficulty</p>
+                    <p>Mixed meters</p>
+                </div>
+                <div class="level-card" data-level="11">
+                    <h3>Level 11 - Elite</h3>
+                    <p>Contemporary notation</p>
+                    <p>Extreme ranges</p>
+                </div>
+                <div class="level-card" data-level="12">
+                    <h3>Level 12 - Legendary</h3>
+                    <p>Ultimate challenge</p>
+                    <p>All techniques combined</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="customization-panel" id="customizationPanel" style="display: none;">
+            <h2>Customize Your Practice</h2>
+            <div class="options">
+                <div class="option-group">
+                    <h3>Key Signature</h3>
+                    <select id="keySignature">
+                        <option value="C">C Major (No sharps/flats)</option>
+                        <option value="G">G Major (1 sharp)</option>
+                        <option value="D">D Major (2 sharps)</option>
+                        <option value="A">A Major (3 sharps)</option>
+                        <option value="E">E Major (4 sharps)</option>
+                        <option value="F">F Major (1 flat)</option>
+                        <option value="Bb">Bb Major (2 flats)</option>
+                        <option value="Eb">Eb Major (3 flats)</option>
+                        <option value="Ab">Ab Major (4 flats)</option>
+                        <option value="random">Random Key</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <h3>Accidentals</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="includeNaturals" checked> Include naturals</label>
+                        <label><input type="checkbox" id="includeSharps"> Include sharps</label>
+                        <label><input type="checkbox" id="includeFlats"> Include flats</label>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <h3>Time Signature</h3>
+                    <select id="timeSignature">
+                        <option value="4/4">4/4 Time</option>
+                        <option value="3/4">3/4 Time</option>
+                        <option value="2/4">2/4 Time</option>
+                        <option value="6/8">6/8 Time</option>
+                        <option value="random">Random Time</option>
+                    </select>
+                </div>
+            </div>
+            <button id="generateMusic" class="generate-btn">Generate Sheet Music</button>
+        </div>
+
+        <div class="music-display" id="musicDisplay" style="display: none;">
+            <div class="controls">
+                <button id="newSheet" class="control-btn">Generate New Sheet</button>
+                <button id="backToLevels" class="control-btn">Back to Levels</button>
+            </div>
+            <div id="vexflowOutput"></div>
+            <div class="practice-info">
+                <p id="currentSettings"></p>
+            </div>
+        </div>
+
+        <!-- Music Composer Interface -->
+        <div class="composer-interface" id="composerInterface" style="display: none;">
+            <div class="composer-header">
+                <h2>🎼 Music Composer</h2>
+                <p>Create, edit, and share your musical compositions</p>
+            </div>
+            
+            <div class="composer-content">
+                <div class="composer-notice">
+                    <h3>🚀 Full Composer App Coming Soon!</h3>
+                    <p>We're building a complete music composition platform with:</p>
+                    <ul>
+                        <li>✨ Advanced notation editor with VexFlow</li>
+                        <li>🎵 Real-time playback with Web Audio API</li>
+                        <li>👥 Real-time collaboration features</li>
+                        <li>📄 Export to PDF, MIDI, and MusicXML</li>
+                        <li>☁️ Cloud storage and sharing</li>
+                        <li>🔐 User accounts and authentication</li>
+                    </ul>
+                    
+                    <div class="composer-demo">
+                        <h4>Preview: Basic Staff</h4>
+                        <div id="composerPreview" class="composer-staff"></div>
+                    </div>
+                    
+                    <div class="composer-actions">
+                        <button id="launchComposer" class="launch-btn">🚀 Launch Full Composer App</button>
+                        <button id="backToSightReading" class="control-btn">Back to Sight Reading</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=10"></script>
+</body>
+</html>
