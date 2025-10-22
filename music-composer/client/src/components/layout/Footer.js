@@ -53,8 +53,19 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+        <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400 space-y-2">
           <p>&copy; {new Date().getFullYear()} Music Composer. All rights reserved.</p>
+          <p className="text-sm text-gray-500">
+            Last updated: {new Date().toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true
+            })}
+          </p>
         </div>
       </div>
     </footer>
