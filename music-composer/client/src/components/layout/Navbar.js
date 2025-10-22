@@ -154,6 +154,46 @@ function Navbar() {
               <NavLink to="/sight-reading" icon={BookOpen}>Sight Reading</NavLink>
               <NavLink to="/browse" icon={Search}>Browse</NavLink>
               <NavLink to="/compose" icon={PlusCircle}>Compose</NavLink>
+
+              {/* Device selector in mobile menu */}
+              <div className="border-t border-gray-200 mt-4 pt-4">
+                <div className="px-3 py-2 text-sm font-medium text-gray-600 mb-2">Device Type</div>
+                <div className="space-y-2">
+                  {[
+                    { id: 'mobile', name: 'Mobile', icon: Smartphone, desc: '320px - 480px' },
+                    { id: 'tablet', name: 'Tablet', icon: Tablet, desc: '768px - 1024px' },
+                    { id: 'laptop', name: 'Laptop', icon: Monitor, desc: '1024px+' },
+                  ].map((d) => {
+                    const Icon = d.icon;
+                    return (
+                      <button
+                        key={d.id}
+                        onClick={() => {
+                          selectDevice({
+                            id: d.id,
+                            name: d.name,
+                            description: d.desc,
+                            icon: d.icon,
+                          });
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded transition-colors ${
+                          device?.id === d.id
+                            ? 'bg-blue-50 text-blue-600 font-semibold'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <div className="text-left flex-1">
+                          <p className="font-medium">{d.name}</p>
+                          <p className="text-xs text-gray-500">{d.desc}</p>
+                        </div>
+                        {device?.id === d.id && <span className="text-blue-600 text-lg">✓</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}

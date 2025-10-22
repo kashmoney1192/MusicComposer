@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, RotateCcw } from 'lucide-react';
+import { useDevice } from '../../contexts/DeviceContext';
 import { generateMusic } from '../../utils/musicGenerator';
 import SettingsPanel from './SettingsPanel';
 import MusicDisplay from './MusicDisplay';
@@ -11,6 +12,8 @@ import PlaybackControls from './PlaybackControls';
  * Combines settings, music display, and playback controls
  */
 const SightReadingGenerator = () => {
+  const { isMobile, isTablet } = useDevice();
+
   // Default settings
   const [settings, setSettings] = useState({
     clef: 'treble',
@@ -57,13 +60,13 @@ const SightReadingGenerator = () => {
   };
 
   return (
-    <div className="sight-reading-generator max-w-7xl mx-auto p-6 space-y-6">
+    <div className={`sight-reading-generator ${isMobile ? 'max-w-full p-3' : isTablet ? 'max-w-5xl p-4' : 'max-w-7xl p-6'} mx-auto space-y-6`}>
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-3">
+      <div className={`text-center ${isMobile ? 'mb-4' : 'mb-8'}`}>
+        <h1 className={`${isMobile ? 'text-2xl' : isTablet ? 'text-3xl' : 'text-4xl'} font-bold text-gray-800 ${isMobile ? 'mb-2' : 'mb-3'}`}>
           Sight Reading Practice Generator
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className={`${isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg'} text-gray-600`}>
           Generate random sheet music to improve your sight-reading skills
         </p>
       </div>
@@ -75,21 +78,21 @@ const SightReadingGenerator = () => {
       />
 
       {/* Generate Button */}
-      <div className="flex items-center justify-center gap-4">
+      <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-center'} gap-4`}>
         <button
           onClick={handleGenerate}
-          className="generate-button flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-lg rounded-xl shadow-xl hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
+          className={`generate-button flex items-center justify-center gap-3 ${isMobile ? 'w-full px-4 py-3 text-sm' : isTablet ? 'px-6 py-3 text-base' : 'px-8 py-4 text-lg'} bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl shadow-xl hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 whitespace-nowrap`}
         >
-          <Sparkles size={24} />
+          <Sparkles size={isMobile ? 18 : 24} />
           {generationCount === 0 ? 'Generate Music' : 'Generate New Music'}
         </button>
 
         {generationCount > 0 && (
           <button
             onClick={handleRegenerate}
-            className="regenerate-button flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold text-lg rounded-xl shadow-xl hover:from-blue-600 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200"
+            className={`regenerate-button flex items-center justify-center gap-2 ${isMobile ? 'w-full px-4 py-3 text-sm' : isTablet ? 'px-6 py-3 text-base' : 'px-6 py-4 text-lg'} bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold rounded-xl shadow-xl hover:from-blue-600 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200 whitespace-nowrap`}
           >
-            <RotateCcw size={20} />
+            <RotateCcw size={isMobile ? 16 : 20} />
             Regenerate
           </button>
         )}
@@ -119,12 +122,12 @@ const SightReadingGenerator = () => {
       />
 
       {/* Practice Tips */}
-      <div className="practice-tips bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 border-2 border-green-200 shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <span className="text-2xl mr-2">💡</span>
+      <div className={`practice-tips bg-gradient-to-br from-green-50 to-teal-50 rounded-xl ${isMobile ? 'p-4' : 'p-6'} border-2 border-green-200 shadow-lg`}>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-gray-800 ${isMobile ? 'mb-3' : 'mb-4'} flex items-center`}>
+          <span className={`${isMobile ? 'text-xl' : 'text-2xl'} mr-2`}>💡</span>
           Sight-Reading Practice Tips
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+        <div className={`grid grid-cols-1 ${isTablet ? 'md:grid-cols-2' : 'md:grid-cols-2'} gap-4 text-sm text-gray-700`}>
           <div className="tip-card bg-white rounded-lg p-4 shadow">
             <div className="font-semibold text-green-700 mb-1">1. Scan First</div>
             <p>Before playing, quickly scan the entire piece to identify key signature, time signature, and difficult passages.</p>

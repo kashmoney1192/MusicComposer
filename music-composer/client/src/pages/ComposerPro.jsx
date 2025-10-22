@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MusicProvider } from '../contexts/MusicContext';
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
+import { useDevice } from '../contexts/DeviceContext';
 import StaffView from '../components/composer/StaffView';
 import PlaybackControls from '../components/composer/PlaybackControls';
 import ExportPanel from '../components/composer/ExportPanel';
@@ -40,6 +41,7 @@ const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [playbackOpen, setPlaybackOpen] = useState(true);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const { isMobile, isTablet } = useDevice();
 
   const handleNewComposition = () => {
     if (window.confirm('Start a new composition? Any unsaved changes will be lost.')) {
@@ -61,27 +63,27 @@ const ComposerProContent = () => {
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">
       {/* Simple Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Music Composer</h1>
-          <div className="flex gap-2">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
+        <div className={`flex ${isMobile ? 'flex-col gap-3' : 'items-center justify-between'}`}>
+          <h1 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-gray-800`}>Music Composer</h1>
+          <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : ''}`}>
             <button
               onClick={() => setShortcutsOpen(true)}
-              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center gap-2"
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center gap-2 whitespace-nowrap`}
               title="Keyboard Shortcuts"
             >
-              <Keyboard size={18} />
-              Shortcuts
+              <Keyboard size={isMobile ? 14 : 18} />
+              <span className={isMobile ? 'hidden' : ''}>Shortcuts</span>
             </button>
             <button
               onClick={handleNewComposition}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap`}
             >
-              New
+              {isMobile ? 'New' : 'New'}
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-green-500 text-white rounded hover:bg-green-600 whitespace-nowrap`}
             >
               Save
             </button>
@@ -90,16 +92,22 @@ const ComposerProContent = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden bg-white">
-        {/* Center - Staff View (Full Width) */}
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div className="max-w-6xl mx-auto">
+      <div className={`flex-1 flex overflow-hidden bg-white ${isMobile || isTablet ? 'flex-col' : ''}`}>
+        {/* Center - Staff View */}
+        <div className={`${isMobile || isTablet ? 'flex-1' : 'flex-1'} overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
+          <div className={`${isMobile ? 'max-w-full' : isTablet ? 'max-w-4xl' : 'max-w-6xl'} mx-auto`}>
             <StaffView />
           </div>
         </div>
 
-        {/* Right Sidebar - Tools & Controls (Collapsible) */}
-        <div className={`transition-all duration-300 border-l border-gray-200 bg-white flex flex-col ${playbackOpen ? 'w-96' : 'w-12'}`}>
+        {/* Right Sidebar - Tools & Controls (Collapsible) - Hidden on mobile, overlay on tablet */}
+        <div className={`transition-all duration-300 border-l border-gray-200 bg-white flex flex-col ${
+          isMobile
+            ? 'hidden'
+            : isTablet
+              ? (playbackOpen ? 'fixed bottom-0 right-0 left-0 h-64 border-t border-l-0 z-40' : 'hidden')
+              : (playbackOpen ? 'w-96' : 'w-12')
+        }`}>
           {playbackOpen ? (
             <>
               {/* Fixed Header */}
