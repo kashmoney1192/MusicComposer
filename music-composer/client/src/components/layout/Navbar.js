@@ -148,7 +148,7 @@ function Navbar() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="md:hidden border-t border-gray-200 py-4 relative z-50">
             <div className="space-y-1">
               <NavLink to="/" icon={Home}>Home</NavLink>
               <NavLink to="/sight-reading" icon={BookOpen}>Sight Reading</NavLink>
@@ -202,7 +202,7 @@ function Navbar() {
       {/* Click outside to close mobile menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-30"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
