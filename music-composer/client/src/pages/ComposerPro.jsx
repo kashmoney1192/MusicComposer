@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MusicProvider, useMusicContext } from '../contexts/MusicContext';
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 import { useDevice } from '../contexts/DeviceContext';
@@ -36,7 +36,26 @@ const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const { isMobile, isTablet } = useDevice();
-  const { addMeasure, removeMeasure, measureCount } = useMusicContext();
+  const { addMeasure, removeMeasure, measureCount, undo, redo } = useMusicContext();
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Undo: Ctrl+Z or Cmd+Z
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      }
+      // Redo: Ctrl+Shift+Z or Cmd+Shift+Z or Ctrl+Y
+      if (((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) || ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
 
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">

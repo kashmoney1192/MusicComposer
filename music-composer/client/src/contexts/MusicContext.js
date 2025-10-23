@@ -304,6 +304,14 @@ export const MusicProvider = ({ children }) => {
       setMeasureCount(cursorPosition.measure);
     }
 
+    // Validate that the note fits in the measure
+    const validation = canAddNoteToMeasure(cursorPosition.measure, selectedTool.duration);
+    if (!validation.canAdd) {
+      // Log to console for debugging - actual UI feedback would be toast notification
+      console.warn(`Cannot add note: Measure ${cursorPosition.measure} would exceed ${validation.maxBeats} beats`);
+      return null;
+    }
+
     // Determine octave based on clef and current cursor staff
     const baseOctave = cursorPosition.staff === 'bass' ? 3 : 4;
     const pitch = `${noteLetter}/${baseOctave}`;
@@ -325,7 +333,7 @@ export const MusicProvider = ({ children }) => {
     moveCursorForward();
 
     return noteId;
-  }, [cursorPosition, selectedTool, addNote, moveCursorForward, measureCount]);
+  }, [cursorPosition, selectedTool, addNote, moveCursorForward, measureCount, canAddNoteToMeasure]);
 
   /**
    * Add chord at cursor position

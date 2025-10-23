@@ -25,10 +25,36 @@ const QuickNoteToolbar = () => {
     { value: null, symbol: '✕', name: 'None', key: 'Shift+N', color: 'bg-gray-500' }
   ];
 
+  const tools = [
+    { value: 'note', symbol: '♪', name: 'Note', key: 'N' },
+    { value: 'rest', symbol: '𝄽', name: 'Rest', key: 'R' }
+  ];
+
   return (
     <div className="quick-note-toolbar sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between gap-6">
+          {/* Note/Rest Toggle */}
+          <div className="flex items-center gap-2">
+            {tools.map((tool) => (
+              <button
+                key={tool.value}
+                onClick={() => setSelectedTool(prev => ({ ...prev, type: tool.value }))}
+                className={`px-3 py-2 rounded-lg font-bold text-xl transition-all ${
+                  selectedTool.type === tool.value
+                    ? 'bg-white text-blue-600 shadow-lg'
+                    : 'bg-blue-500 bg-opacity-30 text-white hover:bg-opacity-50'
+                }`}
+                title={`${tool.name} (${tool.key})`}
+              >
+                {tool.symbol}
+              </button>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-12 bg-white bg-opacity-30"></div>
+
           {/* Durations */}
           <div className="flex items-center gap-3">
             <span className="text-white font-bold text-sm">Duration:</span>
