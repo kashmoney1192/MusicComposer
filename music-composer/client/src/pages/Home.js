@@ -27,9 +27,12 @@ const Home = () => {
               <Music size={isMobile ? 60 : 80} className="relative animate-pulse text-white" />
             </div>
           </div>
-          <h1 className={`${isMobile ? 'text-4xl' : 'text-5xl md:text-7xl'} font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400`}>
+          <h1 className={`${isMobile ? 'text-4xl' : 'text-5xl md:text-7xl'} font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400`}>
             Professional Music Composition
           </h1>
+          <div className={`${isMobile ? 'text-4xl' : 'text-5xl md:text-6xl'} font-black mb-8 tracking-tight text-white`}>
+            Free Without Sign Up
+          </div>
           <p className={`${isMobile ? 'text-lg' : 'text-xl md:text-2xl'} mb-12 text-blue-200 max-w-3xl mx-auto leading-relaxed`}>
             A powerful, free platform for composers, musicians, and music educators. Create, share, and collaborate on sheet music with professional-grade tools.
           </p>

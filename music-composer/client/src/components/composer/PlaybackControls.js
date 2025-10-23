@@ -26,10 +26,10 @@ const PlaybackControls = () => {
   const partRef = useRef(null);
 
   /**
-   * Initialize synthesizer
+   * Initialize synthesizer (only once on mount)
    */
   useEffect(() => {
-    // Create a polyphonic synth
+    // Create a polyphonic synth only once
     synthRef.current = new Tone.PolySynth(Tone.Synth, {
       oscillator: {
         type: 'triangle'
@@ -42,7 +42,7 @@ const PlaybackControls = () => {
       }
     }).toDestination();
 
-    synthRef.current.volume.value = volume;
+    synthRef.current.volume.value = -10; // Default volume
 
     return () => {
       if (synthRef.current) {
@@ -52,7 +52,7 @@ const PlaybackControls = () => {
         partRef.current.dispose();
       }
     };
-  }, [volume]);
+  }, []); // Empty dependency array - create only once
 
   /**
    * Update volume
@@ -223,13 +223,13 @@ const PlaybackControls = () => {
   };
 
   /**
-   * Cleanup on unmount
+   * Cleanup on unmount and when handleStop changes
    */
   useEffect(() => {
     return () => {
       handleStop();
     };
-  }, []);
+  }, [handleStop]);
 
   return (
     <div className="playback-controls bg-white rounded-xl shadow-lg p-6">

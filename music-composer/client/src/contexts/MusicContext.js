@@ -439,12 +439,13 @@ export const MusicProvider = ({ children }) => {
 
   /**
    * Track changes to notes and save to history
+   * Added historyIndex to prevent stale closures in saveToHistory
    */
   useEffect(() => {
     if (!isUndoRedoing && notes.length >= 0) {
       saveToHistory(notes);
     }
-  }, [notes, isUndoRedoing, saveToHistory]);
+  }, [notes, isUndoRedoing, saveToHistory, historyIndex]);
 
   /**
    * Auto-save to localStorage every 30 seconds

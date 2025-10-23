@@ -1,44 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useMusicContext } from '../../contexts/MusicContext';
 import { Check, AlertCircle, Save } from 'lucide-react';
 
 /**
  * AutoSave Component
- * Automatically saves composition to localStorage with visual feedback
+ * Displays auto-save status from MusicContext (handles actual saving)
+ * Shows manual save button and last saved timestamp
  *
- * Features:
- * - Auto-saves every 30 seconds
- * - Saves on note changes
- * - Toast notifications for save status
- * - Last saved timestamp
- * - Manual save button
+ * Note: MusicContext handles all auto-save logic to avoid duplication
  */
 const AutoSave = () => {
-  const { notes, tempo, timeSignature, keySignature, title } = useMusicContext();
+  const { notes, saveToLocalStorage } = useMusicContext();
   const [lastSaved, setLastSaved] = useState(null);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle', 'saving', 'success', 'error'
   const [showToast, setShowToast] = useState(false);
 
-  // Save composition to localStorage
-  const saveComposition = () => {
+  // Manual save triggered by user
+  const handleManualSave = useCallback(async () => {
     try {
       setSaveStatus('saving');
-      const composition = {
-        notes,
-        tempo,
-        timeSignature,
-        keySignature,
-        title,
-        savedAt: new Date().toISOString()
-      };
-
-      localStorage.setItem('music-composition', JSON.stringify(composition));
-      localStorage.setItem('music-composition-backup', JSON.stringify(composition));
-
+      await saveToLocalStorage();
       setLastSaved(new Date());
       setSaveStatus('success');
       setShowToast(true);
-
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Failed to save composition:', error);
@@ -46,29 +30,7 @@ const AutoSave = () => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
     }
-  };
-
-  // Auto-save on changes (debounced)
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (notes.length > 0) {
-        saveComposition();
-      }
-    }, 2000); // Save 2 seconds after last change
-
-    return () => clearTimeout(timeoutId);
-  }, [notes, tempo, timeSignature, keySignature]);
-
-  // Periodic auto-save every 30 seconds
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (notes.length > 0) {
-        saveComposition();
-      }
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(intervalId);
-  }, [notes]);
+  }, [saveToLocalStorage]);
 
   // Load composition on mount
   useEffect(() => {
@@ -133,7 +95,7 @@ const AutoSave = () => {
           </div>
 
           <button
-            onClick={saveComposition}
+            onClick={handleManualSave}
             disabled={notes.length === 0}
             className="flex items-center gap-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-semibold"
             title="Save now"

@@ -94,16 +94,16 @@ const ComposerProContent = () => {
       {/* Main Content Area */}
       <div className={`flex-1 flex overflow-hidden bg-white ${isMobile || isTablet ? 'flex-col' : ''}`}>
         {/* Center - Staff View */}
-        <div className={`${isMobile || isTablet ? 'flex-1' : 'flex-1'} overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
+        <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
           <div className={`${isMobile ? 'max-w-full' : isTablet ? 'max-w-4xl' : 'max-w-6xl'} mx-auto`}>
             <StaffView />
           </div>
         </div>
 
-        {/* Right Sidebar - Tools & Controls (Collapsible) - Hidden on mobile, overlay on tablet */}
+        {/* Right Sidebar - Tools & Controls (Collapsible) - Scales down on mobile, overlay on tablet */}
         <div className={`transition-all duration-300 border-l border-gray-200 bg-white flex flex-col ${
           isMobile
-            ? 'hidden'
+            ? (playbackOpen ? 'w-40' : 'w-12')
             : isTablet
               ? (playbackOpen ? 'fixed bottom-0 right-0 left-0 h-64 border-t border-l-0 z-40' : 'hidden')
               : (playbackOpen ? 'w-96' : 'w-12')
