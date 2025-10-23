@@ -167,7 +167,6 @@ const StaffView = () => {
     context.save();
     context.setFont('Arial', 9, 'bold');
     context.setFillStyle('#999999');
-    context.setTextBaseline('bottom');
     context.fillText(`${measureNum}`, textX, textY);
     context.restore();
 
@@ -275,7 +274,6 @@ const StaffView = () => {
     context.save();
     context.setFont('Arial', 9, 'bold');
     context.setFillStyle('#999999');
-    context.setTextBaseline('bottom');
     context.fillText(`${measureNum}`, textX, textY);
     context.restore();
 
