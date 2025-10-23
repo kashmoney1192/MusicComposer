@@ -140,8 +140,15 @@ const StaffView = () => {
   /**
    * Render a single-staff measure (treble or bass)
    */
-  const renderSingleStaffMeasure = (context, measureNum, x, y, width) => {
-    const stave = new Stave(x, y, width);
+  const renderSingleStaffMeasure = (context, measureNum, x, y, baseWidth) => {
+    // Get notes for this measure to calculate dynamic width
+    const measureNotes = notes.filter(note => note.measure === measureNum);
+
+    // Calculate dynamic width based on note count
+    // Add ~15px per note to accommodate spacing
+    const dynamicWidth = baseWidth + (Math.max(0, measureNotes.length - 4) * 15);
+
+    const stave = new Stave(x, y, dynamicWidth);
 
     // Add clef to first measure
     if (measureNum === 1) {
@@ -153,9 +160,6 @@ const StaffView = () => {
     }
 
     stave.setContext(context).draw();
-
-    // Get notes for this measure
-    const measureNotes = notes.filter(note => note.measure === measureNum);
 
     if (measureNotes.length > 0) {
       // Convert notes to VexFlow format
@@ -219,7 +223,7 @@ const StaffView = () => {
 
       // Format and draw
       // In measure 1, reduce formatting width to account for clef and time signature
-      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
+      const formatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
       new Formatter()
         .joinVoices([voice])
         .format([voice], formatWidth);
@@ -238,9 +242,18 @@ const StaffView = () => {
   /**
    * Render a dual-staff measure (grand staff with treble and bass)
    */
-  const renderDualStaffMeasure = (context, measureNum, x, y, width) => {
+  const renderDualStaffMeasure = (context, measureNum, x, y, baseWidth) => {
+    // Get notes for both staves to calculate dynamic width
+    const trebleNotes = notes.filter(n => n.measure === measureNum && n.staff === 'treble');
+    const bassNotes = notes.filter(n => n.measure === measureNum && n.staff === 'bass');
+    const totalNotes = trebleNotes.length + bassNotes.length;
+
+    // Calculate dynamic width based on total note count
+    // Add ~15px per note to accommodate spacing
+    const dynamicWidth = baseWidth + (Math.max(0, totalNotes - 4) * 15);
+
     // Create treble staff
-    const trebleStave = new Stave(x, y, width);
+    const trebleStave = new Stave(x, y, dynamicWidth);
     trebleStave.addClef('treble');
 
     if (measureNum === 1) {
@@ -253,7 +266,7 @@ const StaffView = () => {
     trebleStave.setContext(context).draw();
 
     // Create bass staff
-    const bassStave = new Stave(x, y + 120, width);
+    const bassStave = new Stave(x, y + 120, dynamicWidth);
     bassStave.addClef('bass');
 
     if (measureNum === 1) {
@@ -273,10 +286,6 @@ const StaffView = () => {
     const barline = new StaveConnector(trebleStave, bassStave);
     barline.setType(StaveConnector.type.SINGLE_LEFT);
     barline.setContext(context).draw();
-
-    // Render notes for each staff
-    const trebleNotes = notes.filter(n => n.measure === measureNum && n.staff === 'treble');
-    const bassNotes = notes.filter(n => n.measure === measureNum && n.staff === 'bass');
 
     // Render treble notes
     if (trebleNotes.length > 0) {
@@ -330,8 +339,8 @@ const StaffView = () => {
       }
 
       // In measure 1, reduce formatting width to account for clef and time signature
-      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
-      new Formatter().joinVoices([voice]).format([voice], formatWidth);
+      const trebleFormatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
+      new Formatter().joinVoices([voice]).format([voice], trebleFormatWidth);
 
       // Draw beams BEFORE voice so they're behind the notes
       beams.forEach(beam => {
@@ -393,8 +402,8 @@ const StaffView = () => {
       }
 
       // In measure 1, reduce formatting width to account for clef and time signature
-      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
-      new Formatter().joinVoices([voice]).format([voice], formatWidth);
+      const bassFormatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
+      new Formatter().joinVoices([voice]).format([voice], bassFormatWidth);
 
       // Draw beams BEFORE voice so they're behind the notes
       beams.forEach(beam => {
