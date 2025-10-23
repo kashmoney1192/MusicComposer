@@ -162,15 +162,14 @@ const StaffView = () => {
     stave.setContext(context).draw();
 
     // Add measure number above staff for every measure
-    if (measureNum > 1 || true) { // Show measure numbers for all measures except possibly first
-      const textX = x + dynamicWidth / 2;
-      const textY = y - 15;
-      context.save();
-      context.setFont('Arial', 10, 'bold');
-      context.setFillStyle('#666666');
-      context.fillText(`${measureNum}`, textX, textY);
-      context.restore();
-    }
+    const textX = x + dynamicWidth / 2;
+    const textY = y - 25; // Position above the staff to avoid overlap
+    context.save();
+    context.setFont('Arial', 9, 'bold');
+    context.setFillStyle('#999999');
+    context.setTextBaseline('bottom');
+    context.fillText(`${measureNum}`, textX, textY);
+    context.restore();
 
     if (measureNotes.length > 0) {
       // Convert notes to VexFlow format
@@ -272,10 +271,11 @@ const StaffView = () => {
 
     // Add measure number above treble staff
     const textX = x + dynamicWidth / 2;
-    const textY = y - 15;
+    const textY = y - 25; // Position above the staff to avoid overlap
     context.save();
-    context.setFont('Arial', 10, 'bold');
-    context.setFillStyle('#666666');
+    context.setFont('Arial', 9, 'bold');
+    context.setFillStyle('#999999');
+    context.setTextBaseline('bottom');
     context.fillText(`${measureNum}`, textX, textY);
     context.restore();
 
@@ -451,7 +451,7 @@ const StaffView = () => {
     const spacing = 20; // Space between measures
     const padding = 10; // Left/right padding
     const availableWidth = staffWidth - (padding * 2);
-    const systemHeight = dualStaffMode ? 280 : 160;
+    const systemHeight = dualStaffMode ? 300 : 180; // Increased for measure numbers
 
     // Calculate how many measures fit per line
     const getMeasuresPerLine = () => {
