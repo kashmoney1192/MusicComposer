@@ -194,8 +194,8 @@ const StaffView = () => {
       voice.setStrict(false);
       voice.addTickables(vexflowNotes);
 
-      // Auto-beam eighth and sixteenth notes BEFORE drawing
-      // This ensures flags are removed from beamed notes before rendering
+      // Auto-beam eighth, sixteenth and 32nd notes
+      // Must create beams BEFORE formatting for proper rendering
       let currentBeamGroup = [];
       const beams = [];
 
@@ -224,11 +224,11 @@ const StaffView = () => {
       // Format and draw
       // In measure 1, reduce formatting width to account for clef and time signature
       const formatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
-      new Formatter()
+      const formatter = new Formatter()
         .joinVoices([voice])
         .format([voice], formatWidth);
 
-      // Draw beams BEFORE voice so they're behind the notes
+      // Draw beams with proper context
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
@@ -312,16 +312,16 @@ const StaffView = () => {
       voice.setStrict(false);
       voice.addTickables(vexflowNotes);
 
-      // Auto-beam eighth and sixteenth notes BEFORE drawing
-      // This ensures flags are removed from beamed notes before rendering
+      // Auto-beam eighth, sixteenth and 32nd notes
+      // Must create beams BEFORE formatting for proper rendering
       let currentBeamGroup = [];
       const beams = [];
 
-      vexflowNotes.forEach((note) => {
-        const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
+      vexflowNotes.forEach((vexflowNote) => {
+        const isBeamable = vexflowNote.duration === '8' || vexflowNote.duration === '16' || vexflowNote.duration === '32';
 
         if (isBeamable) {
-          currentBeamGroup.push(note);
+          currentBeamGroup.push(vexflowNote);
         } else {
           // Non-beamable note breaks the beam group
           if (currentBeamGroup.length > 1) {
@@ -342,7 +342,7 @@ const StaffView = () => {
       const trebleFormatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
       new Formatter().joinVoices([voice]).format([voice], trebleFormatWidth);
 
-      // Draw beams BEFORE voice so they're behind the notes
+      // Draw beams with proper context
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
@@ -375,16 +375,16 @@ const StaffView = () => {
       voice.setStrict(false);
       voice.addTickables(vexflowNotes);
 
-      // Auto-beam eighth and sixteenth notes BEFORE drawing
-      // This ensures flags are removed from beamed notes before rendering
+      // Auto-beam eighth, sixteenth and 32nd notes
+      // Must create beams BEFORE formatting for proper rendering
       let currentBeamGroup = [];
       const beams = [];
 
-      vexflowNotes.forEach((note) => {
-        const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
+      vexflowNotes.forEach((vexflowNote) => {
+        const isBeamable = vexflowNote.duration === '8' || vexflowNote.duration === '16' || vexflowNote.duration === '32';
 
         if (isBeamable) {
-          currentBeamGroup.push(note);
+          currentBeamGroup.push(vexflowNote);
         } else {
           // Non-beamable note breaks the beam group
           if (currentBeamGroup.length > 1) {
@@ -405,7 +405,7 @@ const StaffView = () => {
       const bassFormatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
       new Formatter().joinVoices([voice]).format([voice], bassFormatWidth);
 
-      // Draw beams BEFORE voice so they're behind the notes
+      // Draw beams with proper context
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
@@ -435,7 +435,7 @@ const StaffView = () => {
 
   /**
    * Main rendering function
-   * Handles multi-system layout and calls measure rendering functions
+   * Handles multi-system layout with automatic line wrapping
    */
   useEffect(() => {
     if (!containerRef.current || staffWidth === 0) return;
@@ -443,30 +443,73 @@ const StaffView = () => {
     // Clear previous rendering
     containerRef.current.innerHTML = '';
 
-    const measuresPerSystem = getMeasuresPerSystem();
-    const systemCount = Math.ceil(measureCount / measuresPerSystem);
-
-    const baseWidth = Math.floor(staffWidth / measuresPerSystem) - 20;
+    const baseWidth = 120; // Base width for each measure
+    const spacing = 20; // Space between measures
+    const padding = 10; // Left/right padding
+    const availableWidth = staffWidth - (padding * 2);
     const systemHeight = dualStaffMode ? 280 : 160;
 
-    const totalHeight = systemCount * systemHeight + 40;
+    // Calculate how many measures fit per line
+    const getMeasuresPerLine = () => {
+      let count = 0;
+      let currentX = padding;
+
+      for (let m = 1; m <= measureCount; m++) {
+        const measureWidth = getMeasureWidth(m);
+        if (currentX + measureWidth + spacing > availableWidth && count > 0) {
+          break;
+        }
+        currentX += measureWidth + spacing;
+        count++;
+      }
+      return Math.max(1, count); // At least 1 measure per line
+    };
+
+    // First pass: figure out which measures go on which line
+    const lines = [];
+    let currentLine = [];
+    let currentLineWidth = padding;
+
+    for (let m = 1; m <= measureCount; m++) {
+      const measureWidth = getMeasureWidth(m);
+      const neededWidth = measureWidth + spacing;
+
+      // Check if measure fits on current line
+      if (currentLineWidth + neededWidth <= availableWidth) {
+        currentLine.push(m);
+        currentLineWidth += neededWidth;
+      } else {
+        // Start new line if current line has measures
+        if (currentLine.length > 0) {
+          lines.push(currentLine);
+          currentLine = [m];
+          currentLineWidth = padding + measureWidth + spacing;
+        } else {
+          // Force measure on this line if it's the only one
+          currentLine.push(m);
+          currentLineWidth += neededWidth;
+        }
+      }
+    }
+
+    // Add last line
+    if (currentLine.length > 0) {
+      lines.push(currentLine);
+    }
+
+    const totalHeight = lines.length * systemHeight + 40;
 
     // Create renderer
     const renderer = new Renderer(containerRef.current, Renderer.Backends.SVG);
     renderer.resize(staffWidth, totalHeight);
     const context = renderer.getContext();
 
-    // Render each system
-    for (let system = 0; system < systemCount; system++) {
-      const startMeasure = system * measuresPerSystem + 1;
-      const endMeasure = Math.min(startMeasure + measuresPerSystem - 1, measureCount);
+    // Render each line of measures
+    lines.forEach((line, lineIndex) => {
+      let currentX = padding;
+      const y = lineIndex * systemHeight + 40;
 
-      // Calculate x positions based on actual measure widths
-      let currentX = 10;
-
-      // Render measures in this system
-      for (let m = startMeasure; m <= endMeasure; m++) {
-        const y = system * systemHeight + 40;
+      line.forEach((m) => {
         const measureWidth = getMeasureWidth(m);
 
         if (dualStaffMode) {
@@ -475,10 +518,9 @@ const StaffView = () => {
           renderSingleStaffMeasure(context, m, currentX, y, measureWidth);
         }
 
-        // Update x position for next measure (add spacing)
-        currentX += measureWidth + 20;
-      }
-    }
+        currentX += measureWidth + spacing;
+      });
+    });
 
   }, [notes, measureCount, staffWidth, dualStaffMode, clef, timeSignature, keySignature, selectedNoteId]);
 
