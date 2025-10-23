@@ -82,29 +82,34 @@ const QuickNoteToolbar = () => {
           {/* Divider */}
           <div className="w-px h-12 bg-white bg-opacity-30"></div>
 
-          {/* Accidentals */}
-          <div className="flex items-center gap-3">
-            <span className="text-white font-bold text-sm">Accidental:</span>
-            <div className="flex gap-2">
-              {accidentals.map((acc) => (
-                <button
-                  key={acc.name}
-                  onClick={() => setSelectedTool(prev => ({ ...prev, accidental: acc.value }))}
-                  className={`relative group px-4 py-3 rounded-lg font-bold text-2xl transition-all transform hover:scale-110 ${
-                    selectedTool.accidental === acc.value
-                      ? `${acc.color} text-white shadow-xl scale-110`
-                      : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
-                  }`}
-                  title={`${acc.name} (${acc.key})`}
-                >
-                  {acc.symbol}
-                  <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-blue-900 text-xs font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                    {acc.key}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Accidentals - Only show for notes, not rests */}
+          {selectedTool.type === 'note' && (
+            <>
+              <div className="w-px h-12 bg-white bg-opacity-30"></div>
+              <div className="flex items-center gap-3">
+                <span className="text-white font-bold text-sm">Accidental:</span>
+                <div className="flex gap-2">
+                  {accidentals.map((acc) => (
+                    <button
+                      key={acc.name}
+                      onClick={() => setSelectedTool(prev => ({ ...prev, accidental: acc.value }))}
+                      className={`relative group px-4 py-3 rounded-lg font-bold text-2xl transition-all transform hover:scale-110 ${
+                        selectedTool.accidental === acc.value
+                          ? `${acc.color} text-white shadow-xl scale-110`
+                          : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                      }`}
+                      title={`${acc.name} (${acc.key})`}
+                    >
+                      {acc.symbol}
+                      <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-blue-900 text-xs font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        {acc.key}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Current Selection Display */}
           <div className="flex items-center gap-3 bg-white bg-opacity-20 px-4 py-2 rounded-lg">

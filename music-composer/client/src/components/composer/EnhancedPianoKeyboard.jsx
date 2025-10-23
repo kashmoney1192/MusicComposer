@@ -93,6 +93,16 @@ const EnhancedPianoKeyboard = () => {
         return;
       }
 
+      // Handle Rest toggle (R key) - only if not a piano key combo
+      if (key === 'R' && !pianoKey) {
+        e.preventDefault();
+        setSelectedTool(prev => ({
+          ...prev,
+          type: prev.type === 'rest' ? 'note' : 'rest'
+        }));
+        return;
+      }
+
       // Handle accidental shortcuts
       if (key === 'S') {
         e.preventDefault();

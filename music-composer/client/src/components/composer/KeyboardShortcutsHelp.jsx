@@ -17,7 +17,8 @@ const KeyboardShortcutsHelp = ({ isOpen, onClose }) => {
         { keys: 'Q-R', description: 'Piano keyboard (second octave)' },
         { keys: 'S, D, G, H, J', description: 'Black keys (first octave)' },
         { keys: 'L, ;, 2, 3, 4', description: 'Black keys (second octave)' },
-        { keys: 'Shift + A-G', description: 'Add chord (hold Shift + press notes)' }
+        { keys: 'Shift + A-G', description: 'Add chord (hold Shift + press notes)' },
+        { keys: 'R', description: 'Toggle between Note and Rest (𝄽)' }
       ]
     },
     {
