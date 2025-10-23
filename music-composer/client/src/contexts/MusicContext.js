@@ -88,6 +88,40 @@ export const MusicProvider = ({ children }) => {
   };
 
   /**
+   * Get the total beats used in a specific measure
+   */
+  const getTotalBeatsInMeasure = useCallback((measureNumber) => {
+    const notesInMeasure = notes.filter(n => n.measure === measureNumber);
+    let totalBeats = 0;
+    notesInMeasure.forEach(note => {
+      totalBeats += getDurationInBeats(note.duration);
+    });
+    return totalBeats;
+  }, [notes]);
+
+  /**
+   * Check if a note can be added to a measure without exceeding the time signature
+   * Returns { canAdd: boolean, message: string, currentBeats: number, maxBeats: number }
+   */
+  const canAddNoteToMeasure = useCallback((measureNumber, noteDuration) => {
+    const currentBeats = getTotalBeatsInMeasure(measureNumber);
+    const maxBeats = timeSignature.beats;
+    const noteBeats = getDurationInBeats(noteDuration);
+    const totalAfterAdd = currentBeats + noteBeats;
+
+    return {
+      canAdd: totalAfterAdd <= maxBeats,
+      message: totalAfterAdd > maxBeats
+        ? `Cannot add note: ${totalAfterAdd.toFixed(2)}/${maxBeats} beats (would exceed measure)`
+        : `OK: ${totalAfterAdd.toFixed(2)}/${maxBeats} beats`,
+      currentBeats,
+      maxBeats,
+      noteBeats,
+      totalAfterAdd
+    };
+  }, [getDurationInBeats, getTotalBeatsInMeasure, timeSignature]);
+
+  /**
    * Check if a measure is full and auto-create new measures if needed
    */
   const checkAndCreateMeasures = useCallback((measureNumber) => {
@@ -564,6 +598,8 @@ export const MusicProvider = ({ children }) => {
     addMeasure,
     removeMeasure,
     insertMeasure,
+    getTotalBeatsInMeasure,
+    canAddNoteToMeasure,
 
     // Playback
     isPlaying,

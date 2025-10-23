@@ -20,7 +20,8 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
     getNotesForMeasure,
     selectedNoteId,
     addNote,
-    selectedPaletteNote
+    selectedPaletteNote,
+    canAddNoteToMeasure
   } = useMusicContext();
 
   useEffect(() => {
@@ -135,7 +136,7 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
   ]);
 
   /**
-   * Handle click on staff - place selected palette note or notify parent
+   * Handle click on staff - place selected palette note with beat validation
    */
   const handleStaffClick = (event) => {
     if (!containerRef.current) return;
@@ -172,7 +173,7 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
     const measureWidth = width - 20;
     const beat = Math.floor((relativeX / measureWidth) * timeSignature.beats);
 
-    // Always place a note when clicking on the staff
+    // Check if click is on the staff
     if (y >= staffTop - 20 && y <= staffBottom + 20) {
       // Use selected palette note if available, otherwise use default quarter note
       const noteToPlace = selectedPaletteNote || {
@@ -181,13 +182,29 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
         label: 'Quarter Note'
       };
 
+      // Validate that note fits in the measure
+      const validation = canAddNoteToMeasure(measureNumber, noteToPlace.duration);
+
+      if (!validation.canAdd) {
+        console.warn(validation.message);
+        // Show visual feedback - flash the staff red
+        containerRef.current.style.backgroundColor = '#fee2e2';
+        setTimeout(() => {
+          if (containerRef.current) {
+            containerRef.current.style.backgroundColor = '';
+          }
+        }, 500);
+        return; // Don't add the note
+      }
+
       console.log('Placing note:', {
         pitch,
         duration: noteToPlace.duration,
         measure: measureNumber,
         beat: Math.max(0, beat),
         position,
-        isRest: noteToPlace.isRest || false
+        isRest: noteToPlace.isRest || false,
+        validation: validation.message
       });
 
       const noteId = addNote({

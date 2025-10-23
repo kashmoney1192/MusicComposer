@@ -22,11 +22,16 @@ const NoteEditor = () => {
     clearAllNotes,
     deleteMeasure,
     newComposition,
-    dualStaffMode
+    dualStaffMode,
+    selectedTool,
+    canAddNoteToMeasure,
+    getTotalBeatsInMeasure,
+    timeSignature
   } = useMusicContext();
 
   const [selectedMeasureToDelete, setSelectedMeasureToDelete] = useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   /**
    * Handle clicking on staff to add a note
@@ -42,16 +47,30 @@ const NoteEditor = () => {
     if (existingNote) {
       // If clicking an existing note, select it
       setSelectedNoteId(existingNote.id);
+      setValidationError('');
     } else {
+      // Validate that note fits in the measure
+      const validation = canAddNoteToMeasure(clickData.measure, selectedTool.duration);
+
+      if (!validation.canAdd) {
+        setValidationError(validation.message);
+        // Clear error message after 3 seconds
+        setTimeout(() => setValidationError(''), 3000);
+        return;
+      }
+
       // Add new note
       addNote({
         pitch: clickData.pitch,
         measure: clickData.measure,
         beat: clickData.beat,
-        position: clickData.position
+        position: clickData.position,
+        duration: selectedTool.duration
       });
+
+      setValidationError('');
     }
-  }, [notes, addNote, setSelectedNoteId]);
+  }, [notes, addNote, setSelectedNoteId, selectedTool, canAddNoteToMeasure]);
 
   /**
    * Handle keyboard shortcuts
@@ -254,6 +273,15 @@ const NoteEditor = () => {
         </div>
       </div>
 
+      {/* Validation Error Message */}
+      {validationError && (
+        <div className="mb-4 bg-red-50 border border-red-300 rounded-lg p-3">
+          <p className="text-sm font-semibold text-red-700">
+            {validationError}
+          </p>
+        </div>
+      )}
+
       {/* Selected Note Info */}
       {selectedNoteId && (
         <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -266,15 +294,26 @@ const NoteEditor = () => {
       {/* Staff Container - Scrollable for many measures */}
       <div className="staff-container-wrapper bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {Array.from({ length: measureCount }, (_, index) => (
-            <div key={index + 1} className="measure-container">
+          {Array.from({ length: measureCount }, (_, index) => {
+            const measureNum = index + 1;
+            const beatCount = getTotalBeatsInMeasure(measureNum);
+            const maxBeats = timeSignature.beats;
+            const isFull = beatCount >= maxBeats;
+
+            return (
+            <div key={measureNum} className="measure-container">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-gray-600">
-                  Measure {index + 1}
+                  Measure {measureNum}
                 </span>
-                <span className="text-xs text-gray-500">
-                  {notes.filter(n => n.measure === index + 1).length} note{notes.filter(n => n.measure === index + 1).length !== 1 ? 's' : ''}
-                </span>
+                <div className="text-xs text-gray-500 space-y-0.5">
+                  <div>
+                    {notes.filter(n => n.measure === measureNum).length} note{notes.filter(n => n.measure === measureNum).length !== 1 ? 's' : ''}
+                  </div>
+                  <div className={`font-semibold ${isFull ? 'text-red-600' : beatCount > 0 ? 'text-blue-600' : 'text-gray-400'}`}>
+                    {beatCount.toFixed(2)}/{maxBeats} beats
+                  </div>
+                </div>
               </div>
               {dualStaffMode ? (
                 <DualStaff
@@ -290,7 +329,8 @@ const NoteEditor = () => {
                 />
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
