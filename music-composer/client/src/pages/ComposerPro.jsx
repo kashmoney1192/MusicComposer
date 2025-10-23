@@ -7,7 +7,8 @@ import ScoreSettings from '../components/composer/ScoreSettings';
 import KeyboardShortcutsHelp from '../components/composer/KeyboardShortcutsHelp';
 import AutoSave from '../components/composer/AutoSave';
 import WelcomeTutorial from '../components/composer/WelcomeTutorial';
-import { Settings, Keyboard, Plus, Minus } from 'lucide-react';
+import ExportButtons from '../components/composer/ExportButtons';
+import { Settings, Keyboard, Plus, Minus, FileDown } from 'lucide-react';
 
 /**
  * ComposerPro Component
@@ -35,8 +36,9 @@ import { Settings, Keyboard, Plus, Minus } from 'lucide-react';
 const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const { isMobile, isTablet } = useDevice();
-  const { addMeasure, removeMeasure, measureCount, undo, redo } = useMusicContext();
+  const { addMeasure, removeMeasure, measureCount, undo, redo, notes } = useMusicContext();
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -84,6 +86,17 @@ const ComposerProContent = () => {
                 <span className={isMobile ? 'hidden' : 'text-xs'}>Remove</span>
               </button>
             </div>
+
+            {/* Export Button */}
+            <button
+              onClick={() => setExportOpen(true)}
+              disabled={notes.length === 0}
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors`}
+              title="Export composition"
+            >
+              <FileDown size={isMobile ? 14 : 18} />
+              <span className={isMobile ? 'hidden' : ''}>Export</span>
+            </button>
 
             {/* Keyboard Shortcuts Button */}
             <button
@@ -135,6 +148,32 @@ const ComposerProContent = () => {
         isOpen={shortcutsOpen}
         onClose={() => setShortcutsOpen(false)}
       />
+
+      {/* Export Panel Modal */}
+      {exportOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setExportOpen(false)}
+          />
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-800">Export Composition</h2>
+                <button
+                  onClick={() => setExportOpen(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="p-6">
+                <ExportButtons onClose={() => setExportOpen(false)} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Auto-Save Status Bar */}
       <AutoSave />

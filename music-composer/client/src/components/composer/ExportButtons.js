@@ -9,7 +9,7 @@ import { useMusicContext } from '../../contexts/MusicContext';
  * ExportButtons Component - Export composition to PDF, MIDI, or save to localStorage
  * Provides user-friendly export options with visual feedback
  */
-const ExportButtons = () => {
+const ExportButtons = ({ onClose }) => {
   const {
     title,
     composer,
@@ -217,6 +217,11 @@ const ExportButtons = () => {
 
       showMessage('PDF exported successfully!');
       setIsExporting(false);
+
+      // Close modal after successful export
+      if (onClose) {
+        setTimeout(() => onClose(), 1500);
+      }
 
     } catch (error) {
       console.error('Error exporting PDF:', error);
