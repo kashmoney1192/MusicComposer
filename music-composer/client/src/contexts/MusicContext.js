@@ -219,6 +219,16 @@ export const MusicProvider = ({ children }) => {
   }, [notes]);
 
   /**
+   * Get notes for a specific measure, sorted by beat position
+   * This ensures notes render in chronological order, not insertion order
+   */
+  const getSortedNotesForMeasure = useCallback((measureNumber) => {
+    return notes
+      .filter(note => note.measure === measureNumber)
+      .sort((a, b) => a.beat - b.beat);
+  }, [notes]);
+
+  /**
    * Delete all notes from a specific measure
    */
   const deleteMeasure = useCallback((measureNumber) => {
@@ -564,6 +574,7 @@ export const MusicProvider = ({ children }) => {
     clearAllNotes,
     getSortedNotes,
     getNotesForMeasure,
+    getSortedNotesForMeasure,
     deleteMeasure,
 
     // Tool selection

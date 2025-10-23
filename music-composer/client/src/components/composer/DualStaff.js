@@ -7,7 +7,7 @@ import { useMusicContext } from '../../contexts/MusicContext';
  * Used for compositions that need both right hand (treble) and left hand (bass)
  */
 const DualStaff = ({ measureNumber, width, onNoteClick }) => {
-  const { notes, timeSignature, keySignature, selectedNoteId, currentStaff } = useMusicContext();
+  const { notes, timeSignature, keySignature, selectedNoteId, currentStaff, getSortedNotesForMeasure } = useMusicContext();
   const containerRef = useRef(null);
 
   /**
@@ -88,9 +88,10 @@ const DualStaff = ({ measureNumber, width, onNoteClick }) => {
       renderer.resize(width, 300);
       const context = renderer.getContext();
 
-      // Get notes for this measure
-      const trebleNotes = notes.filter(n => n.measure === measureNumber && n.staff === 'treble');
-      const bassNotes = notes.filter(n => n.measure === measureNumber && n.staff === 'bass');
+      // Get notes for this measure, sorted by beat position
+      const allNotesInMeasure = getSortedNotesForMeasure(measureNumber);
+      const trebleNotes = allNotesInMeasure.filter(n => n.staff === 'treble');
+      const bassNotes = allNotesInMeasure.filter(n => n.staff === 'bass');
 
       // Create treble staff
       const trebleStave = new Stave(10, 40, width - 20);

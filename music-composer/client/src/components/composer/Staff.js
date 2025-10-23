@@ -18,6 +18,7 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
     keySignature,
     clef,
     getNotesForMeasure,
+    getSortedNotesForMeasure,
     selectedNoteId,
     addNote,
     selectedPaletteNote,
@@ -60,8 +61,8 @@ const Staff = ({ measureNumber, width = 400, onNoteClick }) => {
       // Draw the staff
       stave.setContext(context).draw();
 
-      // Get notes for this measure
-      const measureNotes = getNotesForMeasure(measureNumber);
+      // Get notes for this measure, sorted by beat position
+      const measureNotes = getSortedNotesForMeasure(measureNumber);
       console.log(`Measure ${measureNumber} has ${measureNotes.length} notes:`, measureNotes);
 
       if (measureNotes.length > 0) {
