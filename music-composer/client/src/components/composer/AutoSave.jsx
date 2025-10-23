@@ -10,7 +10,7 @@ import { Check, AlertCircle, Save } from 'lucide-react';
  * Note: MusicContext handles all auto-save logic to avoid duplication
  */
 const AutoSave = () => {
-  const { notes, saveToLocalStorage } = useMusicContext();
+  const { notes, saveToLocalStorage, measureCount, timeSignature, title } = useMusicContext();
   const [lastSaved, setLastSaved] = useState(null);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle', 'saving', 'success', 'error'
   const [showToast, setShowToast] = useState(false);
@@ -66,43 +66,58 @@ const AutoSave = () => {
   return (
     <>
       {/* Auto-Save Status Bar */}
-      <div className="auto-save-status bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm">
-            {saveStatus === 'saving' && (
+      <div className="auto-save-status bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-between gap-4">
+          {/* Left: Composition Info */}
+          <div className="flex items-center gap-4 text-sm flex-1">
+            {notes.length > 0 && (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
-                <span className="text-gray-600">Saving...</span>
+                <div className="text-gray-700 font-semibold">
+                  {title} <span className="text-gray-500 font-normal">({notes.length} {notes.length === 1 ? 'note' : 'notes'})</span>
+                </div>
+                <div className="text-gray-600">
+                  {measureCount} {measureCount === 1 ? 'measure' : 'measures'} • {timeSignature.beats}/{timeSignature.beatType}
+                </div>
               </>
             )}
-            {saveStatus === 'success' && (
-              <>
-                <Check size={16} className="text-green-500" />
-                <span className="text-gray-600">
-                  Last saved: <span className="font-semibold text-gray-800">{getRelativeTime()}</span>
-                </span>
-              </>
-            )}
-            {saveStatus === 'error' && (
-              <>
-                <AlertCircle size={16} className="text-red-500" />
-                <span className="text-red-600">Save failed</span>
-              </>
-            )}
-            {saveStatus === 'idle' && notes.length === 0 && (
-              <span className="text-gray-500">No composition yet</span>
+            {notes.length === 0 && (
+              <span className="text-gray-500">No composition yet · Add notes to get started</span>
             )}
           </div>
 
-          <button
-            onClick={handleManualSave}
-            disabled={notes.length === 0}
-            className="flex items-center gap-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-semibold"
-            title="Save now"
-          >
-            <Save size={14} />
-            Save Now
-          </button>
+          {/* Right: Save Status */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-xs">
+              {saveStatus === 'saving' && (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-500 border-t-transparent"></div>
+                  <span className="text-gray-600">Saving...</span>
+                </>
+              )}
+              {saveStatus === 'success' && (
+                <>
+                  <Check size={14} className="text-green-500" />
+                  <span className="text-gray-600">{getRelativeTime()}</span>
+                </>
+              )}
+              {saveStatus === 'error' && (
+                <>
+                  <AlertCircle size={14} className="text-red-500" />
+                  <span className="text-red-600">Save failed</span>
+                </>
+              )}
+            </div>
+
+            <button
+              onClick={handleManualSave}
+              disabled={notes.length === 0}
+              className="flex items-center gap-1 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs font-semibold"
+              title="Save composition"
+            >
+              <Save size={12} />
+              Save
+            </button>
+          </div>
         </div>
       </div>
 
