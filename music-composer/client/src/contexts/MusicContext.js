@@ -460,6 +460,46 @@ export const MusicProvider = ({ children }) => {
     return () => clearInterval(autoSaveInterval);
   }, [notes, saveToLocalStorage]);
 
+  /**
+   * Add a new measure to the composition
+   */
+  const addMeasure = useCallback(() => {
+    setMeasureCount(prev => prev + 1);
+  }, []);
+
+  /**
+   * Remove the last measure from the composition
+   * (only if no notes exist in that measure)
+   */
+  const removeMeasure = useCallback(() => {
+    if (measureCount > 1) {
+      const notesInLastMeasure = notes.filter(n => n.measure === measureCount);
+
+      if (notesInLastMeasure.length === 0) {
+        setMeasureCount(prev => Math.max(1, prev - 1));
+      } else {
+        console.warn('Cannot remove measure with notes. Delete notes first.');
+      }
+    }
+  }, [measureCount, notes]);
+
+  /**
+   * Insert a measure at a specific position
+   */
+  const insertMeasure = useCallback((afterMeasure) => {
+    // Shift all notes after this measure forward by one measure
+    setNotes(prevNotes =>
+      prevNotes.map(note =>
+        note.measure > afterMeasure
+          ? { ...note, measure: note.measure + 1 }
+          : note
+      )
+    );
+
+    // Increase total measure count
+    setMeasureCount(prev => prev + 1);
+  }, []);
+
   const value = {
     // Metadata
     title,
@@ -521,6 +561,9 @@ export const MusicProvider = ({ children }) => {
     // Measures
     measureCount,
     setMeasureCount,
+    addMeasure,
+    removeMeasure,
+    insertMeasure,
 
     // Playback
     isPlaying,

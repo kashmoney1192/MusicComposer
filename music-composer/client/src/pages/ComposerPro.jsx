@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MusicProvider } from '../contexts/MusicContext';
+import { MusicProvider, useMusicContext } from '../contexts/MusicContext';
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 import { useDevice } from '../contexts/DeviceContext';
 import StaffView from '../components/composer/StaffView';
@@ -7,7 +7,7 @@ import ScoreSettings from '../components/composer/ScoreSettings';
 import KeyboardShortcutsHelp from '../components/composer/KeyboardShortcutsHelp';
 import AutoSave from '../components/composer/AutoSave';
 import WelcomeTutorial from '../components/composer/WelcomeTutorial';
-import { Settings, Keyboard } from 'lucide-react';
+import { Settings, Keyboard, Plus, Minus } from 'lucide-react';
 
 /**
  * ComposerPro Component
@@ -36,6 +36,7 @@ const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const { isMobile, isTablet } = useDevice();
+  const { addMeasure, removeMeasure, measureCount } = useMusicContext();
 
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">
@@ -44,6 +45,28 @@ const ComposerProContent = () => {
         <div className={`flex ${isMobile ? 'flex-col gap-3' : 'items-center justify-between'}`}>
           <h1 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-gray-800`}>Music Composer</h1>
           <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : ''}`}>
+            {/* Measure Controls */}
+            <div className={`flex gap-2 items-center px-3 py-1 bg-gray-100 rounded-lg ${isMobile ? 'text-xs' : ''}`}>
+              <button
+                onClick={addMeasure}
+                className={`${isMobile ? 'p-1' : 'px-2 py-1'} bg-green-500 text-white rounded hover:bg-green-600 flex items-center gap-1 transition-colors`}
+                title="Add Measure"
+              >
+                <Plus size={isMobile ? 14 : 16} />
+                <span className={isMobile ? 'hidden' : 'text-xs'}>Add</span>
+              </button>
+              <span className={`font-semibold text-gray-700 ${isMobile ? 'text-xs' : ''}`}>{measureCount}</span>
+              <button
+                onClick={removeMeasure}
+                className={`${isMobile ? 'p-1' : 'px-2 py-1'} bg-red-500 text-white rounded hover:bg-red-600 flex items-center gap-1 transition-colors`}
+                title="Remove Last Measure"
+              >
+                <Minus size={isMobile ? 14 : 16} />
+                <span className={isMobile ? 'hidden' : 'text-xs'}>Remove</span>
+              </button>
+            </div>
+
+            {/* Keyboard Shortcuts Button */}
             <button
               onClick={() => setShortcutsOpen(true)}
               className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center gap-2 whitespace-nowrap`}
