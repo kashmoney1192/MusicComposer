@@ -191,20 +191,43 @@ const StaffView = () => {
       voice.addTickables(vexflowNotes);
 
       // Format and draw
+      // In measure 1, reduce formatting width to account for clef and time signature
+      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
       new Formatter()
         .joinVoices([voice])
-        .format([voice], width - 20);
+        .format([voice], formatWidth);
 
       voice.draw(context, stave);
 
-      // Auto-beam eighth and sixteenth notes
-      const beamableNotes = vexflowNotes.filter(n =>
-        n.duration === '8' || n.duration === '16'
-      );
-      if (beamableNotes.length > 1) {
-        const beam = new Beam(beamableNotes);
-        beam.setContext(context).draw();
+      // Auto-beam eighth and sixteenth notes (within measure boundaries only)
+      // Group consecutive beamable notes into separate beams
+      const beamGroups = [];
+      let currentBeamGroup = [];
+
+      vexflowNotes.forEach((note, index) => {
+        const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
+
+        if (isBeamable) {
+          currentBeamGroup.push(note);
+        } else {
+          // Non-beamable note breaks the beam group
+          if (currentBeamGroup.length > 1) {
+            beamGroups.push([...currentBeamGroup]);
+          }
+          currentBeamGroup = [];
+        }
+      });
+
+      // Don't forget the last group
+      if (currentBeamGroup.length > 1) {
+        beamGroups.push(currentBeamGroup);
       }
+
+      // Draw each beam group independently
+      beamGroups.forEach(beamGroup => {
+        const beam = new Beam(beamGroup);
+        beam.setContext(context).draw();
+      });
     }
 
     return stave;
@@ -278,8 +301,36 @@ const StaffView = () => {
       voice.setStrict(false);
       voice.addTickables(vexflowNotes);
 
-      new Formatter().joinVoices([voice]).format([voice], width - 20);
+      // In measure 1, reduce formatting width to account for clef and time signature
+      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
+      new Formatter().joinVoices([voice]).format([voice], formatWidth);
       voice.draw(context, trebleStave);
+
+      // Auto-beam eighth and sixteenth notes on treble staff
+      const beamGroups = [];
+      let currentBeamGroup = [];
+
+      vexflowNotes.forEach((note) => {
+        const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
+
+        if (isBeamable) {
+          currentBeamGroup.push(note);
+        } else {
+          if (currentBeamGroup.length > 1) {
+            beamGroups.push([...currentBeamGroup]);
+          }
+          currentBeamGroup = [];
+        }
+      });
+
+      if (currentBeamGroup.length > 1) {
+        beamGroups.push(currentBeamGroup);
+      }
+
+      beamGroups.forEach(beamGroup => {
+        const beam = new Beam(beamGroup);
+        beam.setContext(context).draw();
+      });
     }
 
     // Render bass notes
@@ -307,8 +358,36 @@ const StaffView = () => {
       voice.setStrict(false);
       voice.addTickables(vexflowNotes);
 
-      new Formatter().joinVoices([voice]).format([voice], width - 20);
+      // In measure 1, reduce formatting width to account for clef and time signature
+      const formatWidth = measureNum === 1 ? width - 80 : width - 20;
+      new Formatter().joinVoices([voice]).format([voice], formatWidth);
       voice.draw(context, bassStave);
+
+      // Auto-beam eighth and sixteenth notes on bass staff
+      const beamGroups = [];
+      let currentBeamGroup = [];
+
+      vexflowNotes.forEach((note) => {
+        const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
+
+        if (isBeamable) {
+          currentBeamGroup.push(note);
+        } else {
+          if (currentBeamGroup.length > 1) {
+            beamGroups.push([...currentBeamGroup]);
+          }
+          currentBeamGroup = [];
+        }
+      });
+
+      if (currentBeamGroup.length > 1) {
+        beamGroups.push(currentBeamGroup);
+      }
+
+      beamGroups.forEach(beamGroup => {
+        const beam = new Beam(beamGroup);
+        beam.setContext(context).draw();
+      });
     }
 
     return { trebleStave, bassStave };
