@@ -122,35 +122,6 @@ export const MusicProvider = ({ children }) => {
   }, [getDurationInBeats, getTotalBeatsInMeasure, timeSignature]);
 
   /**
-   * Validate all measures against a specific time signature
-   * Returns array of measure numbers that exceed the beat limit
-   */
-  const validateMeasuresForTimeSignature = useCallback((testTimeSignature) => {
-    const invalidMeasures = [];
-    const maxBeats = testTimeSignature.beats;
-
-    // Check each measure
-    for (let m = 1; m <= measureCount; m++) {
-      const measureNotes = notes.filter(n => n.measure === m);
-      let totalBeats = 0;
-      measureNotes.forEach(note => {
-        totalBeats += getDurationInBeats(note.duration);
-      });
-
-      if (totalBeats > maxBeats) {
-        invalidMeasures.push({
-          measure: m,
-          totalBeats,
-          maxBeats,
-          noteCount: measureNotes.length
-        });
-      }
-    }
-
-    return invalidMeasures;
-  }, [notes, measureCount, getDurationInBeats]);
-
-  /**
    * Check if a measure is full and auto-create new measures if needed
    */
   const checkAndCreateMeasures = useCallback((measureNumber) => {
@@ -640,7 +611,6 @@ export const MusicProvider = ({ children }) => {
     insertMeasure,
     getTotalBeatsInMeasure,
     canAddNoteToMeasure,
-    validateMeasuresForTimeSignature,
 
     // Playback
     isPlaying,

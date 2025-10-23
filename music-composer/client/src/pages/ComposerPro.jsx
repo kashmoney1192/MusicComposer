@@ -36,27 +36,7 @@ const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const { isMobile, isTablet } = useDevice();
-  const { addMeasure, removeMeasure, measureCount, timeSignature, setTimeSignature, validateMeasuresForTimeSignature } = useMusicContext();
-
-  const handleTimeSignatureChange = (newBeats, newBeatType = null) => {
-    const newTimeSignature = {
-      beats: newBeats !== null ? newBeats : timeSignature.beats,
-      beatType: newBeatType !== null ? newBeatType : timeSignature.beatType
-    };
-
-    // Validate all measures against the new time signature
-    const invalidMeasures = validateMeasuresForTimeSignature(newTimeSignature);
-
-    if (invalidMeasures.length > 0) {
-      const warning = `⚠️ Warning: The following measures exceed ${newTimeSignature.beats}/${newTimeSignature.beatType} time:\n\n${invalidMeasures.map(m => `Measure ${m.measure}: ${m.totalBeats.toFixed(2)}/${m.maxBeats} beats (${m.noteCount} notes)`).join('\n')}\n\nDo you want to change the time signature anyway?`;
-
-      if (!window.confirm(warning)) {
-        return; // User cancelled
-      }
-    }
-
-    setTimeSignature(newTimeSignature);
-  };
+  const { addMeasure, removeMeasure, measureCount } = useMusicContext();
 
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">
@@ -84,38 +64,6 @@ const ComposerProContent = () => {
                 <Minus size={isMobile ? 14 : 16} />
                 <span className={isMobile ? 'hidden' : 'text-xs'}>Remove</span>
               </button>
-            </div>
-
-            {/* Time Signature Selector */}
-            <div className={`flex gap-1 items-center px-2 py-1 bg-gray-100 rounded-lg ${isMobile ? 'text-xs' : ''}`}>
-              <label className={`font-semibold text-gray-700 ${isMobile ? 'text-xs' : 'text-sm'}`}>Time:</label>
-              <select
-                value={timeSignature.beats}
-                onChange={(e) => handleTimeSignatureChange(parseInt(e.target.value))}
-                className={`${isMobile ? 'p-0.5 text-xs' : 'px-2 py-1'} border border-gray-300 rounded bg-white hover:bg-gray-50 transition-colors font-semibold`}
-                title="Time Signature Numerator (beats per measure)"
-              >
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-                <option value={4}>4</option>
-                <option value={5}>5</option>
-                <option value={6}>6</option>
-                <option value={7}>7</option>
-                <option value={8}>8</option>
-                <option value={9}>9</option>
-              </select>
-              <span className={`font-bold text-gray-700 ${isMobile ? 'text-xs' : ''}`}>/</span>
-              <select
-                value={timeSignature.beatType}
-                onChange={(e) => handleTimeSignatureChange(null, parseInt(e.target.value))}
-                className={`${isMobile ? 'p-0.5 text-xs' : 'px-2 py-1'} border border-gray-300 rounded bg-white hover:bg-gray-50 transition-colors font-semibold`}
-                title="Time Signature Denominator (beat unit)"
-              >
-                <option value={2}>2</option>
-                <option value={4}>4</option>
-                <option value={8}>8</option>
-                <option value={16}>16</option>
-              </select>
             </div>
 
             {/* Keyboard Shortcuts Button */}
