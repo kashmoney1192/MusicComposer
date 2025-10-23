@@ -417,6 +417,23 @@ const StaffView = () => {
   };
 
   /**
+   * Calculate the dynamic width for a specific measure
+   */
+  const getMeasureWidth = (measureNum) => {
+    const baseWidth = Math.floor(staffWidth / getMeasuresPerSystem()) - 20;
+
+    if (dualStaffMode) {
+      const trebleNotes = notes.filter(n => n.measure === measureNum && n.staff === 'treble');
+      const bassNotes = notes.filter(n => n.measure === measureNum && n.staff === 'bass');
+      const totalNotes = trebleNotes.length + bassNotes.length;
+      return baseWidth + (Math.max(0, totalNotes - 4) * 15);
+    } else {
+      const measureNotes = notes.filter(note => note.measure === measureNum);
+      return baseWidth + (Math.max(0, measureNotes.length - 4) * 15);
+    }
+  };
+
+  /**
    * Main rendering function
    * Handles multi-system layout and calls measure rendering functions
    */
@@ -429,7 +446,7 @@ const StaffView = () => {
     const measuresPerSystem = getMeasuresPerSystem();
     const systemCount = Math.ceil(measureCount / measuresPerSystem);
 
-    const measureWidth = Math.floor(staffWidth / measuresPerSystem) - 20;
+    const baseWidth = Math.floor(staffWidth / measuresPerSystem) - 20;
     const systemHeight = dualStaffMode ? 280 : 160;
 
     const totalHeight = systemCount * systemHeight + 40;
@@ -444,17 +461,22 @@ const StaffView = () => {
       const startMeasure = system * measuresPerSystem + 1;
       const endMeasure = Math.min(startMeasure + measuresPerSystem - 1, measureCount);
 
+      // Calculate x positions based on actual measure widths
+      let currentX = 10;
+
       // Render measures in this system
       for (let m = startMeasure; m <= endMeasure; m++) {
-        const col = (m - startMeasure);
-        const x = col * (measureWidth + 20) + 10;
         const y = system * systemHeight + 40;
+        const measureWidth = getMeasureWidth(m);
 
         if (dualStaffMode) {
-          renderDualStaffMeasure(context, m, x, y, measureWidth);
+          renderDualStaffMeasure(context, m, currentX, y, measureWidth);
         } else {
-          renderSingleStaffMeasure(context, m, x, y, measureWidth);
+          renderSingleStaffMeasure(context, m, currentX, y, measureWidth);
         }
+
+        // Update x position for next measure (add spacing)
+        currentX += measureWidth + 20;
       }
     }
 
