@@ -55,29 +55,57 @@ const QuickNoteToolbar = () => {
           {/* Divider */}
           <div className="w-px h-12 bg-white bg-opacity-30"></div>
 
-          {/* Durations */}
-          <div className="flex items-center gap-3">
-            <span className="text-white font-bold text-sm">Duration:</span>
-            <div className="flex gap-2">
-              {durations.map((dur) => (
-                <button
-                  key={dur.value}
-                  onClick={() => setSelectedTool(prev => ({ ...prev, duration: dur.value }))}
-                  className={`relative group px-4 py-3 rounded-lg font-bold text-2xl transition-all transform hover:scale-110 ${
-                    selectedTool.duration === dur.value
-                      ? 'bg-white text-blue-600 shadow-xl scale-110'
-                      : 'bg-blue-500 bg-opacity-50 text-white hover:bg-opacity-100'
-                  }`}
-                  title={`${dur.name} Note (${dur.key})`}
-                >
-                  {dur.symbol}
-                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-blue-900 text-xs font-bold px-1.5 py-0.5 rounded-full">
-                    {dur.key}
-                  </span>
-                </button>
-              ))}
+          {/* Note Durations */}
+          {selectedTool.type === 'note' && (
+            <div className="flex items-center gap-3">
+              <span className="text-white font-bold text-sm">Duration:</span>
+              <div className="flex gap-2">
+                {durations.map((dur) => (
+                  <button
+                    key={dur.value}
+                    onClick={() => setSelectedTool(prev => ({ ...prev, duration: dur.value }))}
+                    className={`relative group px-4 py-3 rounded-lg font-bold text-2xl transition-all transform hover:scale-110 ${
+                      selectedTool.duration === dur.value
+                        ? 'bg-white text-blue-600 shadow-xl scale-110'
+                        : 'bg-blue-500 bg-opacity-50 text-white hover:bg-opacity-100'
+                    }`}
+                    title={`${dur.name} Note (${dur.key})`}
+                  >
+                    {dur.symbol}
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-blue-900 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                      {dur.key}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Rest Durations */}
+          {selectedTool.type === 'rest' && (
+            <div className="flex items-center gap-3">
+              <span className="text-white font-bold text-sm">Rest:</span>
+              <div className="flex gap-2">
+                {durations.map((dur) => (
+                  <button
+                    key={dur.value}
+                    onClick={() => setSelectedTool(prev => ({ ...prev, duration: dur.value }))}
+                    className={`relative group px-4 py-3 rounded-lg font-bold text-2xl transition-all transform hover:scale-110 ${
+                      selectedTool.duration === dur.value
+                        ? 'bg-amber-400 text-gray-900 shadow-xl scale-110'
+                        : 'bg-amber-600 bg-opacity-50 text-white hover:bg-opacity-100'
+                    }`}
+                    title={`${dur.name} Rest (${dur.key})`}
+                  >
+                    {dur.symbol}
+                    <span className="absolute -top-2 -right-2 bg-yellow-300 text-gray-900 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                      {dur.key}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Divider */}
           <div className="w-px h-12 bg-white bg-opacity-30"></div>
@@ -112,12 +140,16 @@ const QuickNoteToolbar = () => {
           )}
 
           {/* Current Selection Display */}
-          <div className="flex items-center gap-3 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
-            <div className="text-white text-sm">
-              <div className="font-bold">Current:</div>
+          <div className={`flex items-center gap-3 px-4 py-2 rounded-lg ${
+            selectedTool.type === 'note'
+              ? 'bg-blue-400 bg-opacity-30 text-white'
+              : 'bg-amber-400 bg-opacity-30 text-gray-900'
+          }`}>
+            <div className="text-sm">
+              <div className="font-bold">{selectedTool.type === 'note' ? 'Note' : 'Rest'}:</div>
               <div className="flex items-center gap-2">
                 <span className="text-3xl">{durations.find(d => d.value === selectedTool.duration)?.symbol}</span>
-                {selectedTool.accidental && (
+                {selectedTool.type === 'note' && selectedTool.accidental && (
                   <span className="text-2xl">{accidentals.find(a => a.value === selectedTool.accidental)?.symbol}</span>
                 )}
               </div>
