@@ -3,16 +3,11 @@ import { MusicProvider } from '../contexts/MusicContext';
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 import { useDevice } from '../contexts/DeviceContext';
 import StaffView from '../components/composer/StaffView';
-import PlaybackControls from '../components/composer/PlaybackControls';
-import ExportPanel from '../components/composer/ExportPanel';
 import ScoreSettings from '../components/composer/ScoreSettings';
-import Metronome from '../components/composer/Metronome';
 import KeyboardShortcutsHelp from '../components/composer/KeyboardShortcutsHelp';
 import AutoSave from '../components/composer/AutoSave';
-import ChordLibrary from '../components/composer/ChordLibrary';
-import MeasureNavigator from '../components/composer/MeasureNavigator';
 import WelcomeTutorial from '../components/composer/WelcomeTutorial';
-import { Settings, Play, Keyboard } from 'lucide-react';
+import { Settings, Keyboard } from 'lucide-react';
 
 /**
  * ComposerPro Component
@@ -39,26 +34,8 @@ import { Settings, Play, Keyboard } from 'lucide-react';
  */
 const ComposerProContent = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [playbackOpen, setPlaybackOpen] = useState(true);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const { isMobile, isTablet } = useDevice();
-
-  const handleNewComposition = () => {
-    if (window.confirm('Start a new composition? Any unsaved changes will be lost.')) {
-      // This would call newComposition from MusicContext
-      window.location.reload();
-    }
-  };
-
-  const handleSave = () => {
-    alert('Composition saved to browser storage!');
-    // Already handled by auto-save in MusicContext
-  };
-
-  const handleLoad = () => {
-    // This would trigger load from MusicContext
-    alert('Load functionality - check browser storage');
-  };
 
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">
@@ -75,87 +52,14 @@ const ComposerProContent = () => {
               <Keyboard size={isMobile ? 14 : 18} />
               <span className={isMobile ? 'hidden' : ''}>Shortcuts</span>
             </button>
-            <button
-              onClick={handleNewComposition}
-              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap`}
-            >
-              {isMobile ? 'New' : 'New'}
-            </button>
-            <button
-              onClick={handleSave}
-              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-green-500 text-white rounded hover:bg-green-600 whitespace-nowrap`}
-            >
-              Save
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className={`flex-1 flex overflow-hidden bg-white ${isMobile || isTablet ? 'flex-col' : ''}`}>
-        {/* Center - Staff View */}
-        <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
-          <div className={`${isMobile ? 'max-w-full' : isTablet ? 'max-w-4xl' : 'max-w-6xl'} mx-auto`}>
-            <StaffView />
-          </div>
-        </div>
-
-        {/* Right Sidebar - Tools & Controls (Collapsible) - Scales down on mobile, overlay on tablet */}
-        <div className={`transition-all duration-300 border-l border-gray-200 bg-white flex flex-col ${
-          isMobile
-            ? (playbackOpen ? 'w-40' : 'w-12')
-            : isTablet
-              ? (playbackOpen ? 'fixed bottom-0 right-0 left-0 h-64 border-t border-l-0 z-40' : 'hidden')
-              : (playbackOpen ? 'w-96' : 'w-12')
-        }`}>
-          {playbackOpen ? (
-            <>
-              {/* Fixed Header */}
-              <div className="flex-shrink-0 p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <Play size={20} />
-                    Tools & Controls
-                  </h3>
-                  <button
-                    onClick={() => setPlaybackOpen(false)}
-                    className="p-1 hover:bg-gray-100 rounded text-gray-600"
-                    title="Hide Tools"
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
-
-              {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-4 space-y-6">
-                  {/* Measure Navigator */}
-                  <MeasureNavigator />
-
-                  {/* Metronome */}
-                  <Metronome />
-
-                  {/* Chord Library */}
-                  <ChordLibrary />
-
-                  {/* Playback */}
-                  <PlaybackControls />
-
-                  {/* Export */}
-                  <ExportPanel />
-                </div>
-              </div>
-            </>
-          ) : (
-            <button
-              onClick={() => setPlaybackOpen(true)}
-              className="w-full h-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-              title="Show Tools"
-            >
-              <Play size={20} className="text-gray-600 rotate-180" />
-            </button>
-          )}
+      {/* Main Content Area - Clean Staff View Only */}
+      <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
+        <div className={`${isMobile ? 'max-w-full' : isTablet ? 'max-w-4xl' : 'max-w-6xl'} mx-auto`}>
+          <StaffView />
         </div>
       </div>
 
