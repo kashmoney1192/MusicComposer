@@ -210,6 +210,7 @@ const StaffView = () => {
       formatter.format([voice], formatWidth);
 
       // Create and draw beams for eighth and smaller notes
+      // Collect all groups of consecutive beamable notes and beam them together
       const beams = [];
       let currentBeamGroup = [];
 
@@ -219,23 +220,37 @@ const StaffView = () => {
         if (isBeamable) {
           currentBeamGroup.push(note);
         } else {
-          if (currentBeamGroup.length > 1) {
-            beams.push(new Beam(currentBeamGroup));
+          // Non-beamable note breaks the beam group
+          // Create a beam for this group (even if only 1 note - it will get a flag)
+          if (currentBeamGroup.length >= 1) {
+            if (currentBeamGroup.length === 1) {
+              // Single note - just give it a flag, don't beam
+              // VexFlow will handle this automatically
+            } else {
+              // Multiple notes - beam them together
+              beams.push(new Beam(currentBeamGroup));
+            }
           }
           currentBeamGroup = [];
         }
       });
 
-      if (currentBeamGroup.length > 1) {
-        beams.push(new Beam(currentBeamGroup));
+      // Handle last group
+      if (currentBeamGroup.length >= 1) {
+        if (currentBeamGroup.length === 1) {
+          // Single note - will get a flag automatically
+        } else {
+          // Multiple notes - beam them together
+          beams.push(new Beam(currentBeamGroup));
+        }
       }
 
-      // Draw beams
+      // Draw beams - they will automatically draw stems and connecting lines
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
 
-      // Draw the voice (notes)
+      // Draw the voice (notes) - this draws note heads, flags (for non-beamed notes), and accidentals
       voice.draw(context, stave);
     }
 
@@ -349,7 +364,7 @@ const StaffView = () => {
         beams.push(new Beam(currentBeamGroup));
       }
 
-      // Draw beams
+      // Draw beams with proper context
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
@@ -407,7 +422,7 @@ const StaffView = () => {
         beams.push(new Beam(currentBeamGroup));
       }
 
-      // Draw beams
+      // Draw beams with proper context
       beams.forEach(beam => {
         beam.setContext(context).draw();
       });
