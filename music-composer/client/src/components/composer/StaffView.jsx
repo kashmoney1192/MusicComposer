@@ -200,19 +200,24 @@ const StaffView = () => {
       voice.draw(context, stave);
 
       // Auto-beam eighth and sixteenth notes (within measure boundaries only)
-      // Group consecutive beamable notes into separate beams
+      // Only beam consecutive notes - standalone notes keep their flags
       const beamGroups = [];
       let currentBeamGroup = [];
+      const beamedNotes = new Set();
 
-      vexflowNotes.forEach((note, index) => {
+      vexflowNotes.forEach((note) => {
         const isBeamable = note.duration === '8' || note.duration === '16' || note.duration === '32';
 
         if (isBeamable) {
           currentBeamGroup.push(note);
         } else {
           // Non-beamable note breaks the beam group
+          // Only create beam if we have 2 or more consecutive beamable notes
           if (currentBeamGroup.length > 1) {
-            beamGroups.push([...currentBeamGroup]);
+            const beam = new Beam(currentBeamGroup);
+            beam.setContext(context).draw();
+            // Mark these notes as beamed so we know they don't show flags
+            currentBeamGroup.forEach(n => beamedNotes.add(n));
           }
           currentBeamGroup = [];
         }
@@ -220,14 +225,13 @@ const StaffView = () => {
 
       // Don't forget the last group
       if (currentBeamGroup.length > 1) {
-        beamGroups.push(currentBeamGroup);
+        const beam = new Beam(currentBeamGroup);
+        beam.setContext(context).draw();
+        currentBeamGroup.forEach(n => beamedNotes.add(n));
       }
 
-      // Draw each beam group independently
-      beamGroups.forEach(beamGroup => {
-        const beam = new Beam(beamGroup);
-        beam.setContext(context).draw();
-      });
+      // Standalone beamable notes (not in a group) will naturally show their flags
+      // because they were drawn with voice.draw() and are not in any beam
     }
 
     return stave;
@@ -307,7 +311,7 @@ const StaffView = () => {
       voice.draw(context, trebleStave);
 
       // Auto-beam eighth and sixteenth notes on treble staff
-      const beamGroups = [];
+      // Only beam consecutive notes - standalone notes keep their flags
       let currentBeamGroup = [];
 
       vexflowNotes.forEach((note) => {
@@ -316,21 +320,20 @@ const StaffView = () => {
         if (isBeamable) {
           currentBeamGroup.push(note);
         } else {
+          // Non-beamable note breaks the beam group
           if (currentBeamGroup.length > 1) {
-            beamGroups.push([...currentBeamGroup]);
+            const beam = new Beam(currentBeamGroup);
+            beam.setContext(context).draw();
           }
           currentBeamGroup = [];
         }
       });
 
+      // Don't forget the last group
       if (currentBeamGroup.length > 1) {
-        beamGroups.push(currentBeamGroup);
-      }
-
-      beamGroups.forEach(beamGroup => {
-        const beam = new Beam(beamGroup);
+        const beam = new Beam(currentBeamGroup);
         beam.setContext(context).draw();
-      });
+      }
     }
 
     // Render bass notes
@@ -364,7 +367,7 @@ const StaffView = () => {
       voice.draw(context, bassStave);
 
       // Auto-beam eighth and sixteenth notes on bass staff
-      const beamGroups = [];
+      // Only beam consecutive notes - standalone notes keep their flags
       let currentBeamGroup = [];
 
       vexflowNotes.forEach((note) => {
@@ -373,21 +376,20 @@ const StaffView = () => {
         if (isBeamable) {
           currentBeamGroup.push(note);
         } else {
+          // Non-beamable note breaks the beam group
           if (currentBeamGroup.length > 1) {
-            beamGroups.push([...currentBeamGroup]);
+            const beam = new Beam(currentBeamGroup);
+            beam.setContext(context).draw();
           }
           currentBeamGroup = [];
         }
       });
 
+      // Don't forget the last group
       if (currentBeamGroup.length > 1) {
-        beamGroups.push(currentBeamGroup);
-      }
-
-      beamGroups.forEach(beamGroup => {
-        const beam = new Beam(beamGroup);
+        const beam = new Beam(currentBeamGroup);
         beam.setContext(context).draw();
-      });
+      }
     }
 
     return { trebleStave, bassStave };
