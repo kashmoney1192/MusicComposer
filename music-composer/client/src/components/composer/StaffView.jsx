@@ -145,8 +145,8 @@ const StaffView = () => {
     const measureNotes = notes.filter(note => note.measure === measureNum);
 
     // Calculate dynamic width based on note count
-    // Add ~15px per note to accommodate spacing
-    const dynamicWidth = baseWidth + (Math.max(0, measureNotes.length - 4) * 15);
+    // Add ~8px per note to keep eighth notes tightly spaced
+    const dynamicWidth = baseWidth + (Math.max(0, measureNotes.length - 4) * 8);
 
     const stave = new Stave(x, y, dynamicWidth);
 
@@ -205,9 +205,9 @@ const StaffView = () => {
 
       // Format first
       const formatWidth = measureNum === 1 ? dynamicWidth - 80 : dynamicWidth - 20;
-      new Formatter()
-        .joinVoices([voice])
-        .format([voice], formatWidth);
+      const formatter = new Formatter();
+      formatter.joinVoices([voice]);
+      formatter.format([voice], formatWidth);
 
       // Create and draw beams for eighth and smaller notes
       const beams = [];
@@ -252,8 +252,8 @@ const StaffView = () => {
     const totalNotes = trebleNotes.length + bassNotes.length;
 
     // Calculate dynamic width based on total note count
-    // Add ~15px per note to accommodate spacing
-    const dynamicWidth = baseWidth + (Math.max(0, totalNotes - 4) * 15);
+    // Add ~8px per note to keep eighth notes tightly spaced
+    const dynamicWidth = baseWidth + (Math.max(0, totalNotes - 4) * 8);
 
     // Create treble staff
     const trebleStave = new Stave(x, y, dynamicWidth);
@@ -428,10 +428,12 @@ const StaffView = () => {
       const trebleNotes = notes.filter(n => n.measure === measureNum && n.staff === 'treble');
       const bassNotes = notes.filter(n => n.measure === measureNum && n.staff === 'bass');
       const totalNotes = trebleNotes.length + bassNotes.length;
-      return baseWidth + (Math.max(0, totalNotes - 4) * 15);
+      // Use less width per note to keep eighth notes tighter (8px instead of 15px)
+      return baseWidth + (Math.max(0, totalNotes - 4) * 8);
     } else {
       const measureNotes = notes.filter(note => note.measure === measureNum);
-      return baseWidth + (Math.max(0, measureNotes.length - 4) * 15);
+      // Use less width per note to keep eighth notes tighter (8px instead of 15px)
+      return baseWidth + (Math.max(0, measureNotes.length - 4) * 8);
     }
   };
 
