@@ -161,6 +161,17 @@ const StaffView = () => {
 
     stave.setContext(context).draw();
 
+    // Add measure number above staff for every measure
+    if (measureNum > 1 || true) { // Show measure numbers for all measures except possibly first
+      const textX = x + dynamicWidth / 2;
+      const textY = y - 15;
+      context.save();
+      context.setFont('Arial', 10, 'bold');
+      context.setFillStyle('#666666');
+      context.fillText(`${measureNum}`, textX, textY);
+      context.restore();
+    }
+
     if (measureNotes.length > 0) {
       // Convert notes to VexFlow format
       const vexflowNotes = measureNotes.map(note => {
@@ -258,6 +269,15 @@ const StaffView = () => {
     }
 
     trebleStave.setContext(context).draw();
+
+    // Add measure number above treble staff
+    const textX = x + dynamicWidth / 2;
+    const textY = y - 15;
+    context.save();
+    context.setFont('Arial', 10, 'bold');
+    context.setFillStyle('#666666');
+    context.fillText(`${measureNum}`, textX, textY);
+    context.restore();
 
     // Create bass staff
     const bassStave = new Stave(x, y + 120, dynamicWidth);
