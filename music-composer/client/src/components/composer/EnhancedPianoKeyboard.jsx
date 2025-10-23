@@ -74,12 +74,41 @@ const EnhancedPianoKeyboard = () => {
 
       if (pianoKey && !e.repeat) {
         handleKeyClick(pianoKey);
+        return;
+      }
+
+      // Handle duration shortcuts (1-6 keys)
+      const durationMap = {
+        '1': 'w', // Whole note
+        '2': 'h', // Half note
+        '3': 'q', // Quarter note
+        '4': '8', // Eighth note
+        '5': '16', // Sixteenth note
+        '6': '32'  // Thirty-second note
+      };
+
+      if (durationMap[key]) {
+        e.preventDefault();
+        setSelectedTool(prev => ({ ...prev, duration: durationMap[key] }));
+        return;
+      }
+
+      // Handle accidental shortcuts
+      if (key === 'S') {
+        e.preventDefault();
+        setSelectedTool(prev => ({ ...prev, accidental: '#' }));
+      } else if (key === 'F') {
+        e.preventDefault();
+        setSelectedTool(prev => ({ ...prev, accidental: 'b' }));
+      } else if (key === 'N' && !e.shiftKey) {
+        e.preventDefault();
+        setSelectedTool(prev => ({ ...prev, accidental: 'n' }));
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTool]);
+  }, [selectedTool, pianoKeys]);
 
   const whiteKeys = pianoKeys.filter(k => !k.isBlack);
   const blackKeys = pianoKeys.filter(k => k.isBlack);
