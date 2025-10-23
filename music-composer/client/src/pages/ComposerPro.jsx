@@ -62,11 +62,42 @@ const ComposerProContent = () => {
 
   return (
     <div className="composer-pro h-screen flex flex-col bg-white">
-      {/* Main Content Area - Full Body */}
+      {/* Simple Header */}
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
+        <div className={`flex ${isMobile ? 'flex-col gap-3' : 'items-center justify-between'}`}>
+          <h1 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-gray-800`}>Music Composer</h1>
+          <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : ''}`}>
+            <button
+              onClick={() => setShortcutsOpen(true)}
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center gap-2 whitespace-nowrap`}
+              title="Keyboard Shortcuts"
+            >
+              <Keyboard size={isMobile ? 14 : 18} />
+              <span className={isMobile ? 'hidden' : ''}>Shortcuts</span>
+            </button>
+            <button
+              onClick={handleNewComposition}
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap`}
+            >
+              {isMobile ? 'New' : 'New'}
+            </button>
+            <button
+              onClick={handleSave}
+              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2'} bg-green-500 text-white rounded hover:bg-green-600 whitespace-nowrap`}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
       <div className={`flex-1 flex overflow-hidden bg-white ${isMobile || isTablet ? 'flex-col' : ''}`}>
-        {/* Center - Staff View - Full Width and Height */}
-        <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-6'} bg-white`}>
-          <StaffView />
+        {/* Center - Staff View */}
+        <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-2' : isTablet ? 'p-4' : 'p-8'} bg-white`}>
+          <div className={`${isMobile ? 'max-w-full' : isTablet ? 'max-w-4xl' : 'max-w-6xl'} mx-auto`}>
+            <StaffView />
+          </div>
         </div>
 
         {/* Right Sidebar - Tools & Controls (Collapsible) - Scales down on mobile, overlay on tablet */}
